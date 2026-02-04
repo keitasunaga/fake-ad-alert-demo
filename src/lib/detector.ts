@@ -76,10 +76,30 @@ export const extractPostInfo = (articleElement: HTMLElement): AdInfo | null => {
     return null;
   }
 
-  // 投稿者名を取得（広告かどうかに関わらず）
+  // 投稿者名を取得（プロフィールリンクのhrefから抽出 - 最も確実）
   const header = articleElement.querySelector('header');
-  const nameElement = header?.querySelector('a span, span span');
-  const advertiserName = nameElement?.textContent?.trim() || 'Unknown';
+  let advertiserName = 'Unknown';
+
+  // 方法1: プロフィールリンクのhrefから取得
+  const profileLinks = header?.querySelectorAll('a[href^="/"]') || [];
+  for (const link of profileLinks) {
+    const href = link.getAttribute('href');
+    // ユーザープロフィールリンクのパターン: /{username}/
+    const match = href?.match(/^\/([a-zA-Z0-9._]+)\/?$/);
+    if (match && match[1] !== 'p' && match[1] !== 'reel' && match[1] !== 'explore') {
+      advertiserName = match[1];
+      break;
+    }
+  }
+
+  // 方法2: フォールバック - spanのテキストから取得
+  if (advertiserName === 'Unknown') {
+    const nameElement = header?.querySelector('a span, span span');
+    const text = nameElement?.textContent?.trim();
+    if (text && !text.includes(' ') && text.length < 30) {
+      advertiserName = text;
+    }
+  }
 
   // 画像/動画コンテナを取得
   const mediaContainer = articleElement.querySelector('div > div > div');
