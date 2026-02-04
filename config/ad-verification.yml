@@ -13,6 +13,8 @@ whitelist:
       - "sony"
       - "Sony"
       - "ソニー"
+      - "playstation"
+      - "PlayStation"
   - name: "Apple Japan"
     patterns:
       - "apple"
