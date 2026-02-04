@@ -29,9 +29,11 @@ const processHomeFeed = (): void => {
 
     if (verification.result === 'verified') {
       showVerifiedBadge(post);
-    } else {
+    } else if (verification.result === 'fake') {
+      // ブラックリストのみ警告表示（unknownは何も表示しない）
       showWarningOverlay(post, verification);
     }
+    // unknown の場合は何も表示しない
   });
 };
 
@@ -45,13 +47,25 @@ const processProfilePage = (): void => {
   const verification = verifyAdvertiser(profile.username);
   console.log(`${SCRIPT_NAME} Profile: ${profile.username} -> ${verification.result}`);
 
-  // ヘッダーバッジ
+  // unknown の場合は何も表示しない
+  if (verification.result === 'unknown') {
+    // 処理済みマークだけつけて終了
+    if (profile.headerElement) {
+      markProfileProcessed(profile.headerElement);
+    }
+    profile.gridItems.forEach((item) => {
+      markGridItemProcessed(item);
+    });
+    return;
+  }
+
+  // ヘッダーバッジ（verified または fake の場合のみ）
   if (profile.headerElement) {
     showProfileBadge(profile.headerElement, verification);
     markProfileProcessed(profile.headerElement);
   }
 
-  // グリッドオーバーレイ
+  // グリッドオーバーレイ（verified または fake の場合のみ）
   profile.gridItems.forEach((item) => {
     showGridOverlay(item, verification);
     markGridItemProcessed(item);
@@ -68,6 +82,13 @@ const processModal = (): void => {
   const verification = verifyAdvertiser(modal.username);
   console.log(`${SCRIPT_NAME} Modal: ${modal.username} -> ${verification.result}`);
 
+  // unknown の場合は何も表示しない
+  if (verification.result === 'unknown') {
+    markModalProcessed(modal.modalElement);
+    return;
+  }
+
+  // verified または fake の場合のみバッジ/オーバーレイ表示
   if (modal.headerElement) {
     showModalBadge(modal.headerElement, verification);
   }
