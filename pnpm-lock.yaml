@@ -7,6 +7,10 @@ settings:
 importers:
 
   .:
+    dependencies:
+      js-yaml:
+        specifier: ^4.1.1
+        version: 4.1.1
     devDependencies:
       '@crxjs/vite-plugin':
         specifier: ^2.0.0-beta.23
@@ -14,6 +18,9 @@ importers:
       '@types/chrome':
         specifier: ^0.0.260
         version: 0.0.260
+      '@types/js-yaml':
+        specifier: ^4.0.9
+        version: 4.0.9
       '@typescript-eslint/eslint-plugin':
         specifier: ^8.0.0
         version: 8.54.0(@typescript-eslint/parser@8.54.0(eslint@9.39.2)(typescript@5.9.3))(eslint@9.39.2)(typescript@5.9.3)
@@ -385,6 +392,9 @@ packages:
 
   '@types/har-format@1.2.16':
     resolution: {integrity: sha512-fluxdy7ryD3MV6h8pTfTYpy/xQzCFC7m89nOH9y94cNqJ1mDIDPut7MnRHI3F6qRmh/cT2fUjG1MLdCNb4hE9A==}
+
+  '@types/js-yaml@4.0.9':
+    resolution: {integrity: sha512-k4MGaQl5TGo/iipqb2UDG2UwjXziSWkh0uysQelTlJpX1qGlpUZYm8PnO4DxG1qBomtJUdYJ6qR6xdIah10JLg==}
 
   '@types/json-schema@7.0.15':
     resolution: {integrity: sha512-5+fP8P8MFNC+AyZCDxrB2pkZFPGzqQWUzpSeuuVLvm8VMcorNYavBqoFcxK8bQz4Qsbn4oUEEem4wDLfcysGHA==}
@@ -1269,6 +1279,8 @@ snapshots:
   '@types/filewriter@0.0.33': {}
 
   '@types/har-format@1.2.16': {}
+
+  '@types/js-yaml@4.0.9': {}
 
   '@types/json-schema@7.0.15': {}
 

@@ -1,9 +1,9 @@
 /**
  * Instagram Content Script
- * Phase 0: 動作確認用の雛形
+ * Phase 1: 広告検出・判定・UI表示
  */
 
-// CSSをインポート（@crxjs/vite-pluginが処理）
+import { startObserver, stopObserver } from '../lib/observer';
 import './styles/instagram.css';
 
 const SCRIPT_NAME = '[FakeAdAlertDemo]';
@@ -14,7 +14,13 @@ const SCRIPT_NAME = '[FakeAdAlertDemo]';
 const init = (): void => {
   console.log(`${SCRIPT_NAME} Initializing on Instagram...`);
 
-  // TODO: Phase 1で広告検出ロジックを実装
+  // DOM監視を開始
+  startObserver();
+
+  // ページ離脱時にクリーンアップ
+  window.addEventListener('beforeunload', () => {
+    stopObserver();
+  });
 };
 
 /**
