@@ -26,13 +26,33 @@ export const detectModal = (): ModalInfo | null => {
     return null;
   }
 
-  // 投稿者名を取得
+  // 投稿者名を取得（プロフィールリンクから抽出）
   const header = modal.querySelector('header');
-  const nameElement = header?.querySelector('a span, span span');
-  const username = nameElement?.textContent?.trim() || 'Unknown';
+  let username = 'Unknown';
 
-  // メディア要素
-  const mediaElement = modal.querySelector('div > div > div') as HTMLElement;
+  // 方法1: プロフィールリンクのhrefから取得（最も確実）
+  const profileLink = header?.querySelector('a[href^="/"][role="link"]') as HTMLAnchorElement;
+  if (profileLink) {
+    const href = profileLink.getAttribute('href');
+    const match = href?.match(/^\/([^/]+)\/?$/);
+    if (match) {
+      username = match[1];
+    }
+  }
+
+  // 方法2: フォールバック - 最初のリンク内のテキスト
+  if (username === 'Unknown') {
+    const firstLink = header?.querySelector('a[href^="/"]');
+    const linkText = firstLink?.textContent?.trim();
+    if (linkText && !linkText.includes(' ') && linkText.length < 30) {
+      username = linkText;
+    }
+  }
+
+  // メディア要素（画像/動画のコンテナ）
+  const mediaElement = modal.querySelector('div[role="button"] img, video')?.parentElement as HTMLElement;
+
+  console.log(`[FakeAdAlertDemo] Modal detected - username: ${username}`);
 
   return {
     username,
