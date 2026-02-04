@@ -1,0 +1,9 @@
+/*
+ * Instagram用スタイル
+ * Phase 1で警告オーバーレイ等のスタイルを実装
+ */
+
+/* プレースホルダー - 空ファイルだとビルドでスキップされるため */
+.fake-ad-alert-demo-placeholder {
+  display: none;
+}

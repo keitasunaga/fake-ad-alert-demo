@@ -14,27 +14,27 @@ Phase 0の設計書に基づくタスク分解。Chrome拡張の開発基盤を�
 ## 2. タスク一覧
 
 ### Phase 0-A: プロジェクト基盤
-- [ ] T001: package.json作成・依存関係インストール
-- [ ] T002: TypeScript設定（tsconfig.json）
-- [ ] T003: Viteビルド設定（vite.config.ts）
-- [ ] T004: ESLint設定
+- [x] T001: package.json作成・依存関係インストール
+- [x] T002: TypeScript設定（tsconfig.json）
+- [x] T003: Viteビルド設定（vite.config.ts）
+- [x] T004: ESLint設定
 
 ### Phase 0-B: Chrome拡張設定
-- [ ] T005: manifest.json作成
-- [ ] T006: ディレクトリ構成作成
-- [ ] T007: プレースホルダーアイコン作成
+- [x] T005: manifest.json作成
+- [x] T006: ディレクトリ構成作成
+- [x] T007: プレースホルダーアイコン作成
 
 ### Phase 0-C: 雛形コード
-- [ ] T008: Content Script雛形（Instagram）
-- [ ] T009: Background Script雛形
-- [ ] T010: Popup雛形（空ファイル）
-- [ ] T011: 型定義ファイル（空ファイル）
+- [x] T008: Content Script雛形（Instagram）
+- [x] T009: Background Script雛形
+- [x] T010: Popup雛形（空ファイル）
+- [x] T011: 型定義ファイル（空ファイル）
 
 ### Phase 0-D: 確認・整備
-- [ ] T012: .gitignore作成
-- [ ] T013: ビルド動作確認
-- [ ] T014: Chrome拡張読み込み・動作確認
-- [ ] T015: コミット・プッシュ
+- [x] T012: .gitignore作成
+- [x] T013: ビルド動作確認
+- [x] T014: Chrome拡張読み込み・動作確認（手動テスト）
+- [x] T015: コミット・プッシュ（PR #5）
 
 ---
 
