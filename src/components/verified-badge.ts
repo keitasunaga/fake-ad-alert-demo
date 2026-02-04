@@ -25,7 +25,7 @@ export const showVerifiedBadge = (ad: AdInfo): void => {
   badge.className = BADGE_CLASS;
   badge.innerHTML = `
     <span class="fakead-verified-icon">✅</span>
-    <span class="fakead-verified-text">VeriCerts認証済み</span>
+    <span class="fakead-verified-text">VC認証済み</span>
   `;
 
   // ヘッダーの適切な位置に挿入

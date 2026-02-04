@@ -29,11 +29,11 @@ export const detectProfile = (): ProfileInfo | null => {
   // ヘッダー要素を取得
   const headerElement = document.querySelector('header section') as HTMLElement;
 
-  // グリッドアイテムを取得
+  // グリッドアイテムを取得（投稿 /p/ とリール /reel/ の両方に対応）
   const gridContainer = document.querySelector('article') ||
                         document.querySelector('main > div > div');
   const gridItems = gridContainer
-    ? Array.from(gridContainer.querySelectorAll('a[href*="/p/"]')) as HTMLElement[]
+    ? Array.from(gridContainer.querySelectorAll('a[href*="/p/"], a[href*="/reel/"]')) as HTMLElement[]
     : [];
 
   // 処理済みでないアイテムのみ

@@ -26,7 +26,7 @@ export const showProfileBadge = (
     badge.className = PROFILE_BADGE_CLASS;
     badge.innerHTML = `
       <span class="fakead-profile-badge-icon">✅</span>
-      <span class="fakead-profile-badge-text">VeriCerts認証済み</span>
+      <span class="fakead-profile-badge-text">VC認証済み</span>
     `;
   } else {
     badge.className = PROFILE_WARNING_CLASS;
