@@ -3,8 +3,8 @@
  * Phase 0: 動作確認用の雛形
  */
 
-// モジュールとして扱うためのexport
-export {};
+// CSSをインポート（@crxjs/vite-pluginが処理）
+import './styles/instagram.css';
 
 const SCRIPT_NAME = '[FakeAdAlertDemo]';
 
