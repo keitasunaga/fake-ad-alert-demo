@@ -25,7 +25,7 @@ export const showModalBadge = (
   if (verification.result === 'verified') {
     badge.innerHTML = `
       <span class="fakead-modal-badge-icon">✅</span>
-      <span class="fakead-modal-badge-text">認証済み</span>
+      <span class="fakead-modal-badge-text">VC認証済み</span>
     `;
     badge.classList.add('fakead-modal-badge--verified');
   } else {

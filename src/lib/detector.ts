@@ -97,12 +97,18 @@ export const extractPostInfo = (articleElement: HTMLElement): AdInfo | null => {
 
 /**
  * デモモード: 全投稿を検出（広告ラベル不要）
+ * モーダル内の記事は除外（モーダル専用の処理で対応）
  */
 export const detectAllPosts = (): AdInfo[] => {
-  const articles = document.querySelectorAll('article');
+  // モーダル外のarticleのみを対象にする
+  const articles = document.querySelectorAll('article:not([role="dialog"] article)');
   const posts: AdInfo[] = [];
 
   articles.forEach((article) => {
+    // モーダル内の記事は除外（二重チェック）
+    if (article.closest('[role="dialog"]')) {
+      return;
+    }
     const postInfo = extractPostInfo(article as HTMLElement);
     if (postInfo) {
       posts.push(postInfo);
