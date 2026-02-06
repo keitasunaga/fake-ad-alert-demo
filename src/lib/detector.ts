@@ -84,8 +84,8 @@ export const extractPostInfo = (articleElement: HTMLElement): AdInfo | null => {
   const allLinks = articleElement.querySelectorAll('a[href^="/"]');
   for (const link of allLinks) {
     const href = link.getAttribute('href');
-    // ユーザープロフィールリンクのパターン: /{username}/
-    const match = href?.match(/^\/([a-zA-Z0-9._]+)\/?$/);
+    // ユーザープロフィールリンクのパターン: /{username}/ または /{username}/?hl=ja など
+    const match = href?.match(/^\/([a-zA-Z0-9._]+)\/?(?:\?.*)?$/);
     if (match) {
       const candidate = match[1];
       // 除外パターン
