@@ -11,11 +11,6 @@ const BADGE_CLASS = 'fakead-verified-badge';
  * 認証バッジを表示
  */
 export const showVerifiedBadge = (ad: AdInfo): void => {
-  if (!ad.headerElement) {
-    console.log('[FakeAdAlertDemo] No header element for badge');
-    return;
-  }
-
   // 既にバッジがあれば何もしない
   if (ad.element.querySelector(`.${BADGE_CLASS}`)) {
     return;
@@ -29,21 +24,34 @@ export const showVerifiedBadge = (ad: AdInfo): void => {
     <span class="fakead-verified-text">VC認証済み</span>
   `;
 
-  // ヘッダー内のユーザー名リンクを探す
-  // 方法1: ユーザー名のプロフィールリンクを探す
-  const profileLink = ad.headerElement.querySelector('a[href^="/"][role="link"]');
-  if (profileLink && profileLink.parentElement) {
-    profileLink.parentElement.appendChild(badge);
+  // article全体からユーザー名リンクを探してバッジを挿入
+  // 方法1: プロフィールリンクを探す（ユーザー名のリンク）
+  const allLinks = ad.element.querySelectorAll('a[href^="/"][role="link"]');
+  for (const link of allLinks) {
+    const href = link.getAttribute('href');
+    // プロフィールリンクのパターン: /{username}/ or /{username}/?hl=ja
+    if (href && /^\/[a-zA-Z0-9._]+\/?(\?.*)?$/.test(href)) {
+      // 除外パターン
+      if (!href.startsWith('/p/') && !href.startsWith('/reel') &&
+          !href.startsWith('/explore') && !href.startsWith('/stories')) {
+        // リンクの親要素にバッジを追加
+        if (link.parentElement) {
+          link.parentElement.appendChild(badge);
+          return;
+        }
+      }
+    }
+  }
+
+  // 方法2: headerがあればその中に追加
+  if (ad.headerElement) {
+    ad.headerElement.appendChild(badge);
     return;
   }
 
-  // 方法2: ヘッダー内の最初のspan要素の親を使う
-  const firstSpan = ad.headerElement.querySelector('span');
-  if (firstSpan && firstSpan.parentElement) {
-    firstSpan.parentElement.appendChild(badge);
-    return;
+  // 方法3: article内の最初のdivに追加
+  const firstDiv = ad.element.querySelector('div');
+  if (firstDiv) {
+    firstDiv.appendChild(badge);
   }
-
-  // 方法3: フォールバック - ヘッダー自体に追加
-  ad.headerElement.appendChild(badge);
 };
