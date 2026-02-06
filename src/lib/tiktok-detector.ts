@@ -9,7 +9,7 @@ import type { AdInfo } from './types';
 // TikTok広告を示すセレクタ（変更される可能性あり）
 const TIKTOK_SELECTORS = {
   // 動画コンテナ（For Youフィード）
-  videoContainer: '[data-e2e="recommend-list-item-container"], .tiktok-web-player, [class*="DivItemContainerV2"]',
+  videoContainer: '[data-e2e="recommend-list-item-container"], .tiktok-web-player, [class*="DivItemContainerV2"], [class*="DivVideoCardContainer"]',
   // 広告ラベル
   adLabel: '[data-e2e="ad-label"], [class*="SpanAdBadge"]',
   // 広告主名（ユーザー名）
@@ -18,10 +18,26 @@ const TIKTOK_SELECTORS = {
   videoElement: 'video',
   // ユーザー情報エリア
   userInfo: '[data-e2e="video-author-container"], [data-e2e="browse-user-info"], [class*="DivInfoContainer"]',
+  // プロフィールページ
+  profileHeader: '[data-e2e="user-page"], [class*="DivShareLayoutHeader"]',
+  profileUsername: '[data-e2e="user-title"], [data-e2e="user-subtitle"], h1, h2',
+  // プロフィールの動画グリッド
+  videoGrid: '[data-e2e="user-post-item-list"], [class*="DivVideoFeedV2"]',
+  videoGridItem: '[data-e2e="user-post-item"], [class*="DivItemContainerForSearch"], a[href*="/video/"]',
 } as const;
 
 // 処理済みマーカー
 const PROCESSED_ATTR = 'data-fakead-tiktok-processed';
+const PROFILE_PROCESSED_ATTR = 'data-fakead-tiktok-profile-processed';
+
+/**
+ * プロフィール情報
+ */
+export interface TikTokProfileInfo {
+  username: string;
+  headerElement: HTMLElement | null;
+  gridItems: HTMLElement[];
+}
 
 /**
  * 要素が広告かどうかを判定
@@ -169,4 +185,68 @@ export const detectAllTikTokPosts = (): AdInfo[] => {
   });
 
   return posts;
+};
+
+/**
+ * プロフィールページかどうかを判定
+ */
+export const isTikTokProfilePage = (): boolean => {
+  // URLパターン: /@username
+  return /^https:\/\/www\.tiktok\.com\/@[^/]+\/?$/.test(window.location.href);
+};
+
+/**
+ * URLからユーザー名を取得
+ */
+export const getUsernameFromUrl = (): string | null => {
+  const match = window.location.pathname.match(/^\/@([^/?]+)/);
+  return match ? match[1] : null;
+};
+
+/**
+ * プロフィールページの情報を検出
+ */
+export const detectTikTokProfile = (): TikTokProfileInfo | null => {
+  if (!isTikTokProfilePage()) {
+    return null;
+  }
+
+  // URLからユーザー名を取得
+  const username = getUsernameFromUrl();
+  if (!username) {
+    return null;
+  }
+
+  // プロフィールヘッダーを探す
+  const headerElement = document.querySelector(TIKTOK_SELECTORS.profileHeader) as HTMLElement | null;
+
+  // 処理済みチェック
+  if (headerElement?.hasAttribute(PROFILE_PROCESSED_ATTR)) {
+    return null;
+  }
+
+  // 動画グリッドアイテムを取得
+  const gridItems = Array.from(
+    document.querySelectorAll(TIKTOK_SELECTORS.videoGridItem)
+  ).filter((item) => !item.hasAttribute(PROCESSED_ATTR)) as HTMLElement[];
+
+  return {
+    username,
+    headerElement,
+    gridItems,
+  };
+};
+
+/**
+ * プロフィールヘッダーを処理済みとしてマーク
+ */
+export const markTikTokProfileProcessed = (element: HTMLElement): void => {
+  element.setAttribute(PROFILE_PROCESSED_ATTR, 'true');
+};
+
+/**
+ * グリッドアイテムを処理済みとしてマーク
+ */
+export const markTikTokGridItemProcessed = (element: HTMLElement): void => {
+  element.setAttribute(PROCESSED_ATTR, 'true');
 };
