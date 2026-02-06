@@ -1,0 +1,59 @@
+# 広告認証設定ファイル
+# FakeAdAlertDemo デモ用
+
+whitelist:
+  # 認証済み広告主（VeriCerts認証済み）
+  - name: "トヨタ自動車"
+    patterns:
+      - "toyota"
+      - "トヨタ"
+      - "TOYOTA"
+  - name: "ソニー"
+    patterns:
+      - "sony"
+      - "Sony"
+      - "ソニー"
+      - "playstation"
+      - "PlayStation"
+  - name: "Apple Japan"
+    patterns:
+      - "apple"
+      - "Apple"
+  - name: "Nike"
+    patterns:
+      - "nike"
+      - "Nike"
+      - "ナイキ"
+  - name: "ユニクロ"
+    patterns:
+      - "uniqlo"
+      - "UNIQLO"
+      - "ユニクロ"
+
+blacklist:
+  # フェイク広告パターン（詐欺の可能性）
+  - name: "投資詐欺系"
+    patterns:
+      - "今すぐ100万円"
+      - "誰でも簡単に稼げる"
+      - "副業で月収100万"
+      - "投資で10倍"
+  - name: "なりすまし系"
+    patterns:
+      - "前澤友作"
+      - "堀江貴文"
+      - "horiemon"
+      - "ホリエモン"
+      - "孫正義"
+      - "イーロン・マスク"
+  - name: "情報商材系"
+    patterns:
+      - "限定公開"
+      - "今だけ無料"
+      - "残りわずか"
+      - "秘密の方法"
+  - name: "怪しい美容系"
+    patterns:
+      - "たった1週間で"
+      - "驚きの効果"
+      - "医者も驚く"

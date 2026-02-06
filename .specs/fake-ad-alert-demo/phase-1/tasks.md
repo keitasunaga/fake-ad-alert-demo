@@ -17,26 +17,26 @@ Phase 1の設計書に基づくタスク分解。Instagramでの広告検出・�
 ## 2. タスク一覧
 
 ### Phase 1-A: 基盤・型定義
-- [ ] T101: 追加依存パッケージのインストール
-- [ ] T102: 型定義ファイルの実装
+- [x] T101: 追加依存パッケージのインストール
+- [x] T102: 型定義ファイルの実装
 
 ### Phase 1-B: 設定・判定ロジック
-- [ ] T103: 設定ファイル（ad-verification.yml）作成
-- [ ] T104: 設定読み込み（config-loader.ts）実装
-- [ ] T105: 判定ロジック（verifier.ts）実装
+- [x] T103: 設定ファイル（ad-verification.yml）作成
+- [x] T104: 設定読み込み（config-loader.ts）実装
+- [x] T105: 判定ロジック（verifier.ts）実装
 
 ### Phase 1-C: 広告検出
-- [ ] T106: 広告検出（detector.ts）実装
-- [ ] T107: DOM監視（observer.ts）実装
+- [x] T106: 広告検出（detector.ts）実装
+- [x] T107: DOM監視（observer.ts）実装
 
 ### Phase 1-D: UIコンポーネント
-- [ ] T108: 警告オーバーレイ（warning-overlay.ts）実装
-- [ ] T109: 認証バッジ（verified-badge.ts）実装
-- [ ] T110: Instagram用CSS実装
+- [x] T108: 警告オーバーレイ（warning-overlay.ts）実装
+- [x] T109: 認証バッジ（verified-badge.ts）実装
+- [x] T110: Instagram用CSS実装
 
 ### Phase 1-E: 統合・テスト
-- [ ] T111: Content Script（instagram.ts）更新
-- [ ] T112: ビルド・型チェック
+- [x] T111: Content Script（instagram.ts）更新
+- [x] T112: ビルド・型チェック
 - [ ] T113: Instagram実機テスト
 - [ ] T114: デバッグ・調整
 - [ ] T115: コミット・プッシュ
