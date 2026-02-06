@@ -76,28 +76,37 @@ export const extractPostInfo = (articleElement: HTMLElement): AdInfo | null => {
     return null;
   }
 
-  // 投稿者名を取得（プロフィールリンクのhrefから抽出 - 最も確実）
+  // 投稿者名を取得
   const header = articleElement.querySelector('header');
   let advertiserName = 'Unknown';
 
-  // 方法1: プロフィールリンクのhrefから取得
-  const profileLinks = header?.querySelectorAll('a[href^="/"]') || [];
-  for (const link of profileLinks) {
+  // 方法1: article全体からプロフィールリンクのhrefを探す
+  const allLinks = articleElement.querySelectorAll('a[href^="/"]');
+  for (const link of allLinks) {
     const href = link.getAttribute('href');
     // ユーザープロフィールリンクのパターン: /{username}/
     const match = href?.match(/^\/([a-zA-Z0-9._]+)\/?$/);
-    if (match && match[1] !== 'p' && match[1] !== 'reel' && match[1] !== 'explore') {
-      advertiserName = match[1];
-      break;
+    if (match) {
+      const candidate = match[1];
+      // 除外パターン
+      if (candidate !== 'p' && candidate !== 'reel' && candidate !== 'reels' &&
+          candidate !== 'explore' && candidate !== 'stories' && candidate !== 'direct') {
+        advertiserName = candidate;
+        break;
+      }
     }
   }
 
-  // 方法2: フォールバック - spanのテキストから取得
-  if (advertiserName === 'Unknown') {
-    const nameElement = header?.querySelector('a span, span span');
-    const text = nameElement?.textContent?.trim();
-    if (text && !text.includes(' ') && text.length < 30) {
-      advertiserName = text;
+  // 方法2: ヘッダー内のspanテキストから取得
+  if (advertiserName === 'Unknown' && header) {
+    const spans = header.querySelectorAll('span');
+    for (const span of spans) {
+      const text = span.textContent?.trim();
+      // ユーザー名らしいパターン（英数字、ドット、アンダースコアのみ、スペースなし）
+      if (text && /^[a-zA-Z0-9._]+$/.test(text) && text.length >= 2 && text.length < 30) {
+        advertiserName = text;
+        break;
+      }
     }
   }
 
