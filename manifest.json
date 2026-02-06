@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "FakeAdAlertDemo",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "SNS上のフェイク広告を検出して警告表示するデモ",
   "permissions": [
     "activeTab",
@@ -16,6 +16,11 @@
     {
       "matches": ["https://www.instagram.com/*"],
       "js": ["src/content/instagram.ts"],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": ["https://www.tiktok.com/*"],
+      "js": ["src/content/tiktok.ts"],
       "run_at": "document_idle"
     }
   ],

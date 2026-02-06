@@ -1,0 +1,132 @@
+/*
+ * FakeAdAlertDemo - TikTok用スタイル
+ * TikTokのダークテーマに合わせたUI
+ * Phase 2
+ */
+
+/* ==================== 警告オーバーレイ (TikTok) ==================== */
+
+.fakead-warning-overlay--tiktok {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80%;
+  max-width: 300px;
+  background: rgba(239, 68, 68, 0.9);
+  border-radius: 16px;
+  padding: 24px;
+  z-index: 1000;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.5);
+  /* 右サイドのアクションボタンと干渉しないように左寄せ */
+  margin-right: 80px;
+}
+
+.fakead-warning-overlay--tiktok .fakead-warning-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  color: white;
+  text-align: center;
+}
+
+.fakead-warning-overlay--tiktok .fakead-warning-icon {
+  font-size: 48px;
+  line-height: 1;
+}
+
+.fakead-warning-overlay--tiktok .fakead-warning-title {
+  font-size: 20px;
+  font-weight: 700;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.fakead-warning-overlay--tiktok .fakead-warning-subtitle {
+  font-size: 14px;
+  opacity: 0.9;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* ==================== 認証バッジ (TikTok) ==================== */
+
+.fakead-verified-badge--tiktok {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: 8px;
+  padding: 4px 10px;
+  background: rgba(34, 197, 94, 0.2);
+  border: 1px solid rgba(34, 197, 94, 0.4);
+  border-radius: 16px;
+  font-size: 12px;
+  color: #4ade80;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  vertical-align: middle;
+}
+
+.fakead-verified-badge--tiktok .fakead-verified-icon {
+  font-size: 14px;
+  line-height: 1;
+}
+
+.fakead-verified-badge--tiktok .fakead-verified-text {
+  font-weight: 600;
+}
+
+/* ==================== TikTok固有の調整 ==================== */
+
+/* ダークテーマ対応（TikTokはデフォルトでダーク） */
+.fakead-verified-badge--tiktok {
+  background: rgba(34, 197, 94, 0.25);
+  border-color: rgba(34, 197, 94, 0.5);
+}
+
+/* ==================== レスポンシブ対応 ==================== */
+
+@media (max-width: 768px) {
+  .fakead-warning-overlay--tiktok {
+    width: 70%;
+    max-width: 250px;
+    padding: 16px;
+    margin-right: 60px;
+  }
+
+  .fakead-warning-overlay--tiktok .fakead-warning-icon {
+    font-size: 36px;
+  }
+
+  .fakead-warning-overlay--tiktok .fakead-warning-title {
+    font-size: 16px;
+  }
+
+  .fakead-warning-overlay--tiktok .fakead-warning-subtitle {
+    font-size: 12px;
+  }
+
+  .fakead-verified-badge--tiktok {
+    font-size: 11px;
+    padding: 3px 8px;
+  }
+}
+
+/* モバイル縦型表示対応 */
+@media (max-width: 480px) {
+  .fakead-warning-overlay--tiktok {
+    width: 65%;
+    max-width: 200px;
+    padding: 12px;
+  }
+
+  .fakead-warning-overlay--tiktok .fakead-warning-icon {
+    font-size: 32px;
+  }
+
+  .fakead-warning-overlay--tiktok .fakead-warning-title {
+    font-size: 14px;
+  }
+
+  .fakead-warning-overlay--tiktok .fakead-warning-subtitle {
+    font-size: 11px;
+  }
+}

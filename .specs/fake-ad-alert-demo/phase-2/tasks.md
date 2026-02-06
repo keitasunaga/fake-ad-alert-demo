@@ -17,20 +17,20 @@ Phase 2の設計書に基づくタスク分解。TikTokでの広告検出・UI�
 ## 2. タスク一覧
 
 ### Phase 2-A: 共通コンポーネント拡張
-- [ ] T201: warning-overlay.ts の platform対応
-- [ ] T202: verified-badge.ts の platform対応
+- [x] T201: warning-overlay.ts の platform対応
+- [x] T202: verified-badge.ts の platform対応
 
 ### Phase 2-B: TikTok固有実装
-- [ ] T203: TikTok広告検出（tiktok-detector.ts）
-- [ ] T204: TikTok DOM監視（tiktok-observer.ts）
-- [ ] T205: TikTok Content Script（tiktok.ts）
-- [ ] T206: TikTok用CSS（tiktok.css）
+- [x] T203: TikTok広告検出（tiktok-detector.ts）
+- [x] T204: TikTok DOM監視（tiktok-observer.ts）
+- [x] T205: TikTok Content Script（tiktok.ts）
+- [x] T206: TikTok用CSS（tiktok.css）
 
 ### Phase 2-C: 設定・マニフェスト
-- [ ] T207: manifest.json 更新（TikTok追加）
+- [x] T207: manifest.json 更新（TikTok追加）
 
 ### Phase 2-D: テスト・統合
-- [ ] T208: ビルド・型チェック
+- [x] T208: ビルド・型チェック
 - [ ] T209: TikTok実機テスト
 - [ ] T210: Instagram回帰テスト
 - [ ] T211: デバッグ・調整
