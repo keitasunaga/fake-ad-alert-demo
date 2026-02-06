@@ -12,6 +12,7 @@ const BADGE_CLASS = 'fakead-verified-badge';
  */
 export const showVerifiedBadge = (ad: AdInfo): void => {
   if (!ad.headerElement) {
+    console.log('[FakeAdAlertDemo] No header element for badge');
     return;
   }
 
@@ -28,9 +29,21 @@ export const showVerifiedBadge = (ad: AdInfo): void => {
     <span class="fakead-verified-text">VC認証済み</span>
   `;
 
-  // ヘッダーの適切な位置に挿入
-  const nameContainer = ad.headerElement.querySelector('a, span');
-  if (nameContainer) {
-    nameContainer.parentElement?.appendChild(badge);
+  // ヘッダー内のユーザー名リンクを探す
+  // 方法1: ユーザー名のプロフィールリンクを探す
+  const profileLink = ad.headerElement.querySelector('a[href^="/"][role="link"]');
+  if (profileLink && profileLink.parentElement) {
+    profileLink.parentElement.appendChild(badge);
+    return;
   }
+
+  // 方法2: ヘッダー内の最初のspan要素の親を使う
+  const firstSpan = ad.headerElement.querySelector('span');
+  if (firstSpan && firstSpan.parentElement) {
+    firstSpan.parentElement.appendChild(badge);
+    return;
+  }
+
+  // 方法3: フォールバック - ヘッダー自体に追加
+  ad.headerElement.appendChild(badge);
 };
