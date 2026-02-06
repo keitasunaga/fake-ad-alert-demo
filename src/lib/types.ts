@@ -1,7 +1,13 @@
 /**
  * 型定義 - FakeAdAlertDemo
  * Phase 1: 広告検出・判定・UI表示
+ * Phase 2: TikTok対応
  */
+
+/**
+ * 対応プラットフォーム
+ */
+export type Platform = 'instagram' | 'tiktok';
 
 /**
  * 判定結果

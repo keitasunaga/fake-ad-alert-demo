@@ -1,16 +1,21 @@
 /**
  * 警告オーバーレイ - FakeAdAlertDemo
  * フェイク広告・未認証広告に警告を表示
+ * Phase 2: TikTok対応
  */
 
-import type { AdInfo, VerificationInfo } from '../lib/types';
+import type { AdInfo, VerificationInfo, Platform } from '../lib/types';
 
 const OVERLAY_CLASS = 'fakead-warning-overlay';
 
 /**
  * 警告オーバーレイを表示
  */
-export const showWarningOverlay = (ad: AdInfo, verification: VerificationInfo): void => {
+export const showWarningOverlay = (
+  ad: AdInfo,
+  verification: VerificationInfo,
+  platform: Platform = 'instagram'
+): void => {
   if (!ad.imageElement) {
     return;
   }
@@ -20,9 +25,9 @@ export const showWarningOverlay = (ad: AdInfo, verification: VerificationInfo): 
     return;
   }
 
-  // オーバーレイ要素を作成
+  // オーバーレイ要素を作成（プラットフォーム別クラス付与）
   const overlay = document.createElement('div');
-  overlay.className = OVERLAY_CLASS;
+  overlay.className = `${OVERLAY_CLASS} ${OVERLAY_CLASS}--${platform}`;
   overlay.innerHTML = `
     <div class="fakead-warning-content">
       <span class="fakead-warning-icon">⚠️</span>
