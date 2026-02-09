@@ -18,6 +18,27 @@ import './styles/instagram.css';
 const SCRIPT_NAME = '[FakeAdAlertDemo]';
 
 /**
+ * Backgroundに検出情報を通知
+ */
+const notifyBackground = (
+  advertiserName: string,
+  result: 'verified' | 'fake' | 'unknown',
+  matchedPattern?: string,
+  listType?: string
+): void => {
+  chrome.runtime.sendMessage({
+    type: 'AD_DETECTED',
+    advertiserName,
+    platform: 'instagram',
+    result,
+    matchedPattern,
+    listType,
+  }).catch(() => {
+    // ポップアップが閉じている等でエラーが出ることがあるが無視
+  });
+};
+
+/**
  * ホームフィードの処理
  */
 const processHomeFeed = (): void => {
@@ -26,6 +47,11 @@ const processHomeFeed = (): void => {
   posts.forEach((post) => {
     const verification = verifyAdvertiser(post.advertiserName);
     console.log(`${SCRIPT_NAME} Post: ${post.advertiserName} -> ${verification.result}`);
+
+    // Backgroundに通知
+    if (verification.result !== 'unknown') {
+      notifyBackground(post.advertiserName, verification.result, verification.matchedPattern, verification.listType);
+    }
 
     if (verification.result === 'verified') {
       showVerifiedBadge(post);
@@ -46,6 +72,11 @@ const processProfilePage = (): void => {
 
   const verification = verifyAdvertiser(profile.username);
   console.log(`${SCRIPT_NAME} Profile: ${profile.username} -> ${verification.result}`);
+
+  // Backgroundに通知
+  if (verification.result !== 'unknown') {
+    notifyBackground(profile.username, verification.result, verification.matchedPattern, verification.listType);
+  }
 
   // unknown の場合は何も表示しない
   if (verification.result === 'unknown') {
@@ -81,6 +112,11 @@ const processModal = (): void => {
 
   const verification = verifyAdvertiser(modal.username);
   console.log(`${SCRIPT_NAME} Modal: ${modal.username} -> ${verification.result}`);
+
+  // Backgroundに通知
+  if (verification.result !== 'unknown') {
+    notifyBackground(modal.username, verification.result, verification.matchedPattern, verification.listType);
+  }
 
   // unknown の場合は何も表示しない
   if (verification.result === 'unknown') {
