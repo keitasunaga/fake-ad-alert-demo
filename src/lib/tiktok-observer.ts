@@ -8,7 +8,8 @@ import {
   detectAllTikTokPosts,
   detectTikTokProfile,
   isTikTokProfilePage,
-  getUsernameFromUrl,
+  isTikTokVideoPage,
+  getUsernameFromVideoUrl,
   markTikTokProfileProcessed,
   markTikTokGridItemProcessed,
 } from './tiktok-detector';
@@ -44,6 +45,81 @@ const processTikTokPosts = (): void => {
   });
 };
 
+// 動画ページ処理済みマーカー
+const VIDEO_PAGE_PROCESSED_ATTR = 'data-fakead-video-processed';
+const VIDEO_BADGE_CLASS = 'fakead-tiktok-video-badge';
+const VIDEO_WARNING_CLASS = 'fakead-tiktok-video-warning';
+
+/**
+ * 個別動画ページにバッジを挿入
+ */
+const insertVideoBadge = (
+  anchorElement: HTMLElement,
+  username: string,
+  verification: { result: string }
+): void => {
+  // 既にバッジがあれば何もしない
+  const parent = anchorElement.parentElement;
+  if (!parent) return;
+  if (parent.querySelector(`.${VIDEO_BADGE_CLASS}, .${VIDEO_WARNING_CLASS}`)) return;
+
+  const badge = document.createElement('span');
+
+  if (verification.result === 'verified') {
+    badge.className = VIDEO_BADGE_CLASS;
+    badge.innerHTML = '✅ VC認証済み';
+  } else {
+    badge.className = VIDEO_WARNING_CLASS;
+    badge.innerHTML = '⚠️ 未認証アカウント';
+  }
+
+  // ユーザー名リンクの直後に挿入
+  anchorElement.insertAdjacentElement('afterend', badge);
+};
+
+/**
+ * 個別動画ページを処理
+ */
+const processTikTokVideoPage = (): void => {
+  const username = getUsernameFromVideoUrl();
+  if (!username) {
+    console.log(`${SCRIPT_NAME} Video page: No username found`);
+    return;
+  }
+
+  // 既に処理済みのバッジがあればスキップ
+  if (document.querySelector(`.${VIDEO_BADGE_CLASS}, .${VIDEO_WARNING_CLASS}`)) {
+    return;
+  }
+
+  // ユーザー名リンクを探す（/@username へのリンク）
+  const usernameLink = document.querySelector(
+    `a[href="/@${username}"] span, a[href="/@${username}"]`
+  ) as HTMLElement | null;
+
+  if (!usernameLink) {
+    console.log(`${SCRIPT_NAME} Video page: Username link not found for @${username}`);
+    return;
+  }
+
+  // リンク要素を取得（span の場合は親の a 要素を使う）
+  const linkElement = usernameLink.tagName === 'A'
+    ? usernameLink
+    : (usernameLink.closest('a') || usernameLink);
+
+  console.log(`${SCRIPT_NAME} Video page: Found username link for @${username}`);
+
+  const verification = verifyAdvertiser(username);
+  console.log(`${SCRIPT_NAME} TikTok Video: ${username} -> ${verification.result}`);
+
+  // unknown の場合は何も表示しない
+  if (verification.result === 'unknown') {
+    return;
+  }
+
+  insertVideoBadge(linkElement as HTMLElement, username, verification);
+};
+
 /**
  * プロフィールページを処理
  */
@@ -53,6 +129,7 @@ const processTikTokProfile = (): void => {
 
   const verification = verifyAdvertiser(profile.username);
   console.log(`${SCRIPT_NAME} TikTok Profile: ${profile.username} -> ${verification.result}`);
+  console.log(`${SCRIPT_NAME} Header: ${profile.headerElement ? 'found' : 'null/already processed'}, Grid items: ${profile.gridItems.length}`);
 
   // unknown の場合は何も表示しない
   if (verification.result === 'unknown') {
@@ -66,14 +143,16 @@ const processTikTokProfile = (): void => {
     return;
   }
 
-  // ヘッダーバッジ（verified または fake の場合のみ）
+  // ヘッダーバッジ（verified または fake の場合のみ、まだ処理されていない場合）
   if (profile.headerElement) {
     showTikTokProfileBadge(profile.headerElement, profile.username, verification);
     markTikTokProfileProcessed(profile.headerElement);
   }
 
   // グリッドオーバーレイ（verified または fake の場合のみ）
-  profile.gridItems.forEach((item) => {
+  console.log(`${SCRIPT_NAME} Processing ${profile.gridItems.length} grid items...`);
+  profile.gridItems.forEach((item, index) => {
+    console.log(`${SCRIPT_NAME} Grid item ${index}:`, item.className);
     showTikTokGridOverlay(item, verification);
     markTikTokGridItemProcessed(item);
   });
@@ -83,9 +162,15 @@ const processTikTokProfile = (): void => {
  * ページ種別に応じた処理を実行
  */
 const processPage = (): void => {
-  if (isTikTokProfilePage()) {
+  const isProfile = isTikTokProfilePage();
+  const isVideo = isTikTokVideoPage();
+
+  if (isProfile) {
     console.log(`${SCRIPT_NAME} Page type: TikTok profile`);
     processTikTokProfile();
+  } else if (isVideo) {
+    console.log(`${SCRIPT_NAME} Page type: TikTok video`);
+    processTikTokVideoPage();
   } else {
     console.log(`${SCRIPT_NAME} Page type: TikTok feed`);
     processTikTokPosts();

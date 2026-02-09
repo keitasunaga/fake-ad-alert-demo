@@ -19,11 +19,11 @@ const TIKTOK_SELECTORS = {
   // ユーザー情報エリア
   userInfo: '[data-e2e="video-author-container"], [data-e2e="browse-user-info"], [class*="DivInfoContainer"]',
   // プロフィールページ
-  profileHeader: '[data-e2e="user-page"], [class*="DivShareLayoutHeader"]',
+  profileHeader: '[data-e2e="user-page"], [class*="DivShareLayoutHeader"], [class*="ShareLayoutHeader"]',
   profileUsername: '[data-e2e="user-title"], [data-e2e="user-subtitle"], h1, h2',
-  // プロフィールの動画グリッド
-  videoGrid: '[data-e2e="user-post-item-list"], [class*="DivVideoFeedV2"]',
-  videoGridItem: '[data-e2e="user-post-item"], [class*="DivItemContainerForSearch"], a[href*="/video/"]',
+  // プロフィールの動画グリッド - より広範なセレクタ
+  videoGrid: '[data-e2e="user-post-item-list"], [class*="DivVideoFeedV2"], [class*="VideoFeed"]',
+  videoGridItem: '[data-e2e="user-post-item"], [class*="DivItemContainer"], [class*="DivVideoWrapper"] > div, div[class*="ItemContainer"]',
 } as const;
 
 // 処理済みマーカー
@@ -191,8 +191,25 @@ export const detectAllTikTokPosts = (): AdInfo[] => {
  * プロフィールページかどうかを判定
  */
 export const isTikTokProfilePage = (): boolean => {
-  // URLパターン: /@username
-  return /^https:\/\/www\.tiktok\.com\/@[^/]+\/?$/.test(window.location.href);
+  // URLパターン: /@username（クエリパラメータ許容）
+  // pathname で判定（クエリパラメータを無視）
+  return /^\/@[^/]+\/?$/.test(window.location.pathname);
+};
+
+/**
+ * 個別動画ページかどうかを判定
+ */
+export const isTikTokVideoPage = (): boolean => {
+  // URLパターン: /@username/video/videoId
+  return /^\/@[^/]+\/video\/\d+/.test(window.location.pathname);
+};
+
+/**
+ * 動画ページからユーザー名を取得
+ */
+export const getUsernameFromVideoUrl = (): string | null => {
+  const match = window.location.pathname.match(/^\/@([^/]+)\/video/);
+  return match ? match[1] : null;
 };
 
 /**
@@ -205,34 +222,53 @@ export const getUsernameFromUrl = (): string | null => {
 
 /**
  * プロフィールページの情報を検出
+ * @param includeProcessedHeader - trueの場合、処理済みヘッダーでも新しいグリッドアイテムを返す
  */
-export const detectTikTokProfile = (): TikTokProfileInfo | null => {
+export const detectTikTokProfile = (includeProcessedHeader = false): TikTokProfileInfo | null => {
+  console.log('[FakeAdAlertDemo] detectTikTokProfile: checking...');
+  console.log('[FakeAdAlertDemo] URL:', window.location.href);
+  console.log('[FakeAdAlertDemo] pathname:', window.location.pathname);
+
   if (!isTikTokProfilePage()) {
+    console.log('[FakeAdAlertDemo] Not a profile page');
     return null;
   }
 
   // URLからユーザー名を取得
   const username = getUsernameFromUrl();
+  console.log('[FakeAdAlertDemo] username:', username);
   if (!username) {
+    console.log('[FakeAdAlertDemo] No username found');
     return null;
   }
 
   // プロフィールヘッダーを探す
   const headerElement = document.querySelector(TIKTOK_SELECTORS.profileHeader) as HTMLElement | null;
+  console.log('[FakeAdAlertDemo] headerElement:', headerElement);
 
-  // 処理済みチェック
-  if (headerElement?.hasAttribute(PROFILE_PROCESSED_ATTR)) {
-    return null;
-  }
+  const headerAlreadyProcessed = headerElement?.hasAttribute(PROFILE_PROCESSED_ATTR);
+  console.log('[FakeAdAlertDemo] Header already processed:', headerAlreadyProcessed);
 
-  // 動画グリッドアイテムを取得
+  // 動画グリッドアイテムを取得（未処理のもののみ）
   const gridItems = Array.from(
     document.querySelectorAll(TIKTOK_SELECTORS.videoGridItem)
   ).filter((item) => !item.hasAttribute(PROCESSED_ATTR)) as HTMLElement[];
+  console.log('[FakeAdAlertDemo] gridItems count:', gridItems.length);
+  console.log('[FakeAdAlertDemo] videoGridItem selector:', TIKTOK_SELECTORS.videoGridItem);
 
+  // ヘッダーが処理済みで、新しいグリッドアイテムもなければnull
+  if (headerAlreadyProcessed && gridItems.length === 0) {
+    console.log('[FakeAdAlertDemo] All already processed, skipping');
+    return null;
+  }
+
+  // ヘッダーが処理済みの場合、nullを返す（グリッドのみ処理）
+  const returnHeader = headerAlreadyProcessed ? null : headerElement;
+
+  console.log('[FakeAdAlertDemo] Returning profile info for:', username);
   return {
     username,
-    headerElement,
+    headerElement: returnHeader,
     gridItems,
   };
 };
