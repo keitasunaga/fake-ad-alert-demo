@@ -29,7 +29,9 @@ export const showVerifiedBadge = (
   `;
 
   // プラットフォーム別の挿入ロジック
-  if (platform === 'tiktok') {
+  if (platform === 'news-site') {
+    insertBadgeForNewsSite(ad, badge);
+  } else if (platform === 'tiktok') {
     // TikTok: ユーザー名の横に挿入
     insertBadgeForTikTok(ad, badge);
   } else {
@@ -103,4 +105,17 @@ const insertBadgeForTikTok = (ad: AdInfo, badge: HTMLElement): void => {
   if (firstDiv) {
     firstDiv.appendChild(badge);
   }
+};
+
+/**
+ * ニュースサイト用バッジ挿入
+ */
+const insertBadgeForNewsSite = (ad: AdInfo, badge: HTMLElement): void => {
+  // バナーコンテナの左上にabsolute配置
+  ad.element.style.position = 'relative';
+  badge.style.position = 'absolute';
+  badge.style.top = '6px';
+  badge.style.left = '6px';
+  badge.style.zIndex = '5';
+  ad.element.appendChild(badge);
 };

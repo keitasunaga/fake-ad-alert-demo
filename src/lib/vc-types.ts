@@ -69,7 +69,7 @@ export interface VCInfo {
  */
 export interface DetectedAdInfo {
   advertiserName: string;
-  platform: 'instagram' | 'tiktok';
+  platform: 'instagram' | 'tiktok' | 'news-site';
   result: 'verified' | 'fake' | 'unknown';
   matchedPattern?: string;
   listType?: string;

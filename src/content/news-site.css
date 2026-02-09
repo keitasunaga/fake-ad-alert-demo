@@ -1,0 +1,160 @@
+/*
+ * FakeAdAlertDemo - ニュースサイト用CSS
+ * Phase 5: 警告モーダル + バナーオーバーレイ + 認証バッジ
+ */
+
+/* ==================== 警告モーダル ==================== */
+.fakead-warning-modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999999;
+  animation: fakead-fadeIn 0.2s ease;
+}
+
+.fakead-warning-modal {
+  background: rgba(15, 15, 35, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 16px;
+  padding: 32px;
+  max-width: 420px;
+  width: 90%;
+  text-align: center;
+  color: #ffffff;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+.fakead-warning-modal__icon {
+  font-size: 48px;
+  margin-bottom: 12px;
+}
+
+.fakead-warning-modal__title {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 12px;
+  color: #f87171;
+}
+
+.fakead-warning-modal__description {
+  font-size: 14px;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 20px;
+}
+
+.fakead-warning-modal__details {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  padding: 12px 16px;
+  margin-bottom: 24px;
+  text-align: left;
+}
+
+.fakead-warning-modal__detail-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 0;
+  font-size: 13px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.fakead-warning-modal__detail-row:last-child {
+  border-bottom: none;
+}
+
+.fakead-warning-modal__detail-label {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.fakead-warning-modal__detail-value {
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 500;
+}
+
+.fakead-warning-modal__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.fakead-warning-modal__btn-safe {
+  width: 100%;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: #ffffff;
+  transition: opacity 0.15s ease;
+}
+
+.fakead-warning-modal__btn-safe:hover {
+  opacity: 0.9;
+}
+
+.fakead-warning-modal__btn-proceed {
+  width: 100%;
+  padding: 10px 24px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 400;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.5);
+  transition: all 0.15s ease;
+}
+
+.fakead-warning-modal__btn-proceed:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* ==================== バナー警告オーバーレイ（ニュースサイト用） ==================== */
+.fakead-warning-overlay--news-site {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(239, 68, 68, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid rgba(239, 68, 68, 0.6);
+  border-radius: 4px;
+  z-index: 5;
+  pointer-events: none;
+}
+
+/* ==================== 認証バッジ（ニュースサイト用） ==================== */
+.fakead-verified-badge--news-site {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  background: rgba(16, 185, 129, 0.9);
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 4px;
+  pointer-events: none;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+@keyframes fakead-fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
