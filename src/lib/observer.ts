@@ -11,6 +11,28 @@ import { showVerifiedBadge } from '../components/verified-badge';
 let observer: MutationObserver | null = null;
 
 /**
+ * Backgroundに検出情報を通知
+ */
+const notifyBackground = (
+  advertiserName: string,
+  platform: 'instagram' | 'tiktok',
+  result: 'verified' | 'fake' | 'unknown',
+  matchedPattern?: string,
+  listType?: string
+): void => {
+  chrome.runtime.sendMessage({
+    type: 'AD_DETECTED',
+    advertiserName,
+    platform,
+    result,
+    matchedPattern,
+    listType,
+  }).catch(() => {
+    // ポップアップが閉じている等でエラーが出ることがあるが無視
+  });
+};
+
+/**
  * 検出した広告を処理
  */
 const processAds = (): void => {
@@ -20,6 +42,17 @@ const processAds = (): void => {
     const verification = verifyAdvertiser(ad.advertiserName);
 
     console.log(`[FakeAdAlertDemo] Ad detected: ${ad.advertiserName} -> ${verification.result}`);
+
+    // Backgroundに通知（verified/fakeの場合のみ）
+    if (verification.result !== 'unknown') {
+      notifyBackground(
+        ad.advertiserName,
+        'instagram',
+        verification.result,
+        verification.matchedPattern,
+        verification.listType,
+      );
+    }
 
     if (verification.result === 'verified') {
       showVerifiedBadge(ad);

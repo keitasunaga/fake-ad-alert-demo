@@ -21,6 +21,28 @@ import { showTikTokGridOverlay } from '../components/tiktok-grid-overlay';
 
 const SCRIPT_NAME = '[FakeAdAlertDemo]';
 
+/**
+ * Backgroundに検出情報を通知
+ */
+const notifyBackground = (
+  advertiserName: string,
+  platform: 'instagram' | 'tiktok',
+  result: 'verified' | 'fake' | 'unknown',
+  matchedPattern?: string,
+  listType?: string
+): void => {
+  chrome.runtime.sendMessage({
+    type: 'AD_DETECTED',
+    advertiserName,
+    platform,
+    result,
+    matchedPattern,
+    listType,
+  }).catch(() => {
+    // ポップアップが閉じている等でエラーが出ることがあるが無視
+  });
+};
+
 let observer: MutationObserver | null = null;
 let processingTimeout: number | null = null;
 let lastUrl = '';
@@ -34,6 +56,17 @@ const processTikTokPosts = (): void => {
   posts.forEach((post) => {
     const verification = verifyAdvertiser(post.advertiserName);
     console.log(`${SCRIPT_NAME} TikTok Post: ${post.advertiserName} -> ${verification.result}`);
+
+    // Backgroundに通知（verified/fakeの場合のみ）
+    if (verification.result !== 'unknown') {
+      notifyBackground(
+        post.advertiserName,
+        'tiktok',
+        verification.result,
+        verification.matchedPattern,
+        verification.listType,
+      );
+    }
 
     if (verification.result === 'verified') {
       showVerifiedBadge(post, 'tiktok');
@@ -112,6 +145,17 @@ const processTikTokVideoPage = (): void => {
   const verification = verifyAdvertiser(username);
   console.log(`${SCRIPT_NAME} TikTok Video: ${username} -> ${verification.result}`);
 
+  // Backgroundに通知（verified/fakeの場合のみ）
+  if (verification.result !== 'unknown') {
+    notifyBackground(
+      username,
+      'tiktok',
+      verification.result,
+      verification.matchedPattern,
+      verification.listType,
+    );
+  }
+
   // unknown の場合は何も表示しない
   if (verification.result === 'unknown') {
     return;
@@ -130,6 +174,17 @@ const processTikTokProfile = (): void => {
   const verification = verifyAdvertiser(profile.username);
   console.log(`${SCRIPT_NAME} TikTok Profile: ${profile.username} -> ${verification.result}`);
   console.log(`${SCRIPT_NAME} Header: ${profile.headerElement ? 'found' : 'null/already processed'}, Grid items: ${profile.gridItems.length}`);
+
+  // Backgroundに通知（verified/fakeの場合のみ）
+  if (verification.result !== 'unknown') {
+    notifyBackground(
+      profile.username,
+      'tiktok',
+      verification.result,
+      verification.matchedPattern,
+      verification.listType,
+    );
+  }
 
   // unknown の場合は何も表示しない
   if (verification.result === 'unknown') {
