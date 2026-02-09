@@ -1,0 +1,348 @@
+/*
+ * デイリーニュース Japan - デモ用フェイクニュースサイト
+ * FakeAdAlertDemo Phase 5
+ */
+
+/* ==================== リセット ==================== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Noto Sans JP', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color: #333;
+  background: #f5f5f5;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: #1a73e8;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* ==================== ヘッダー ==================== */
+.news-header {
+  background: #fff;
+  border-bottom: 3px solid #c0392b;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.header-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 12px 20px;
+}
+
+.news-logo {
+  font-size: 26px;
+  font-weight: 900;
+  color: #1a1a1a;
+  margin-bottom: 8px;
+  letter-spacing: -0.5px;
+}
+
+.logo-icon {
+  font-size: 24px;
+}
+
+.logo-sub {
+  font-size: 16px;
+  font-weight: 500;
+  color: #c0392b;
+  margin-left: 4px;
+}
+
+.news-nav {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 4px;
+}
+
+.nav-link {
+  padding: 6px 14px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #555;
+  border-radius: 4px;
+  transition: background 0.15s ease;
+}
+
+.nav-link:hover {
+  background: #f0f0f0;
+  text-decoration: none;
+  color: #333;
+}
+
+.nav-link.nav-active {
+  background: #c0392b;
+  color: #fff;
+}
+
+.nav-link.nav-active:hover {
+  background: #a93226;
+}
+
+.header-date {
+  font-size: 12px;
+  color: #999;
+  margin-top: 4px;
+}
+
+/* ==================== メインレイアウト ==================== */
+.news-container {
+  max-width: 1200px;
+  margin: 20px auto;
+  padding: 0 20px;
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 24px;
+}
+
+/* ==================== 記事 ==================== */
+.news-article {
+  background: #fff;
+  border-radius: 6px;
+  padding: 24px 28px;
+  margin-bottom: 20px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+.article-category {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 700;
+  color: #fff;
+  background: #c0392b;
+  padding: 2px 10px;
+  border-radius: 3px;
+  margin-bottom: 12px;
+}
+
+.article-title {
+  font-size: 24px;
+  font-weight: 900;
+  color: #1a1a1a;
+  line-height: 1.4;
+  margin-bottom: 10px;
+}
+
+.article-sub .article-title {
+  font-size: 20px;
+}
+
+.article-meta {
+  display: flex;
+  gap: 16px;
+  font-size: 13px;
+  color: #888;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #eee;
+}
+
+.article-image {
+  margin-bottom: 16px;
+}
+
+.article-image-placeholder {
+  background: linear-gradient(135deg, #e8f4fd, #dbeafe);
+  border-radius: 6px;
+  height: 240px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #6b9dc8;
+}
+
+.article-image-placeholder span {
+  font-size: 48px;
+  margin-bottom: 8px;
+}
+
+.article-image-placeholder p {
+  font-size: 13px;
+}
+
+.article-body p {
+  font-size: 15px;
+  color: #444;
+  margin-bottom: 14px;
+  text-align: justify;
+}
+
+.article-body p:last-child {
+  margin-bottom: 0;
+}
+
+/* ==================== バナー広告 ==================== */
+.ad-banner {
+  position: relative;
+  margin-bottom: 20px;
+  border-radius: 6px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+.ad-banner a {
+  display: block;
+  line-height: 0;
+}
+
+.ad-banner img {
+  width: 100%;
+  height: auto;
+}
+
+.ad-label {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  font-size: 10px;
+  color: #999;
+  background: rgba(255, 255, 255, 0.85);
+  padding: 1px 6px;
+  border-radius: 2px;
+  line-height: 1.5;
+}
+
+.ad-banner-inline {
+  margin: 20px 0;
+  border-radius: 6px;
+}
+
+/* ==================== サイドバー ==================== */
+.news-sidebar {
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-section {
+  background: #fff;
+  border-radius: 6px;
+  padding: 16px 18px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+.sidebar-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1a1a1a;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #c0392b;
+  margin-bottom: 12px;
+}
+
+.sidebar-links {
+  list-style: none;
+}
+
+.sidebar-links li {
+  padding: 8px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.sidebar-links li:last-child {
+  border-bottom: none;
+}
+
+.sidebar-links a {
+  font-size: 13px;
+  color: #333;
+  line-height: 1.5;
+}
+
+.sidebar-links a:hover {
+  color: #c0392b;
+}
+
+/* ==================== フッター ==================== */
+.news-footer {
+  background: #2c2c2c;
+  color: #aaa;
+  margin-top: 40px;
+  padding: 24px 20px;
+}
+
+.footer-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.footer-copyright {
+  font-size: 13px;
+  margin-bottom: 6px;
+}
+
+.footer-notice {
+  font-size: 12px;
+  color: #e74c3c;
+  font-weight: 500;
+}
+
+/* ==================== レスポンシブ ==================== */
+@media (max-width: 900px) {
+  .news-container {
+    grid-template-columns: 1fr;
+  }
+
+  .news-sidebar {
+    order: -1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .sidebar-section {
+    grid-column: 1 / -1;
+  }
+
+  .ad-banner-inline img {
+    height: auto;
+  }
+}
+
+@media (max-width: 600px) {
+  .news-logo {
+    font-size: 20px;
+  }
+
+  .news-nav {
+    flex-wrap: wrap;
+  }
+
+  .nav-link {
+    padding: 4px 10px;
+    font-size: 13px;
+  }
+
+  .article-title {
+    font-size: 20px;
+  }
+
+  .article-sub .article-title {
+    font-size: 17px;
+  }
+
+  .news-sidebar {
+    grid-template-columns: 1fr;
+  }
+}

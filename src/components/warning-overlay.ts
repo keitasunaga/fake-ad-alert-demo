@@ -36,10 +36,16 @@ export const showWarningOverlay = (
     </div>
   `;
 
-  // 親要素をrelativeに（オーバーレイ配置用）
-  const parent = ad.imageElement.parentElement;
-  if (parent) {
-    parent.style.position = 'relative';
-    parent.appendChild(overlay);
+  if (platform === 'news-site') {
+    // ニュースサイト: バナーコンテナ自体をrelativeに
+    ad.element.style.position = 'relative';
+    ad.element.appendChild(overlay);
+  } else {
+    // SNS: imageElementの親をrelativeに
+    const parent = ad.imageElement.parentElement;
+    if (parent) {
+      parent.style.position = 'relative';
+      parent.appendChild(overlay);
+    }
   }
 };

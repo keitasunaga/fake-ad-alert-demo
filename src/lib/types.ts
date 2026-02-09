@@ -7,7 +7,7 @@
 /**
  * 対応プラットフォーム
  */
-export type Platform = 'instagram' | 'tiktok';
+export type Platform = 'instagram' | 'tiktok' | 'news-site';
 
 /**
  * 判定結果

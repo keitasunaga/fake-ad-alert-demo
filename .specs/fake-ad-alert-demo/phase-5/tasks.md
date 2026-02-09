@@ -23,39 +23,39 @@ Phase 5の設計書に基づくタスク分解。デモ用フェイクニュー�
 ## 2. タスク一覧
 
 ### Phase 5-A: デモサイト作成
-- [ ] T501: デモサイトHTML作成（index.html）
-- [ ] T502: デモサイトCSS作成（style.css）
-- [ ] T503: バナー広告画像作成（SVG 5種）
+- [x] T501: デモサイトHTML作成（index.html）
+- [x] T502: デモサイトCSS作成（style.css）
+- [x] T503: バナー広告画像作成（SVG 5種）
 
 ### Phase 5-B: 拡張機能コア変更
-- [ ] T504: Platform型・DetectedAdInfo型の拡張
-- [ ] T505: manifest.json更新（v0.5.0、content_scripts追加）
-- [ ] T506: config/ad-verification.yml更新（なりすまし検出パターン追加）
+- [x] T504: Platform型・DetectedAdInfo型の拡張
+- [x] T505: manifest.json更新（v0.5.0、content_scripts追加）
+- [x] T506: config/ad-verification.yml更新（なりすまし検出パターン追加）
 
 ### Phase 5-C: バナー検出・表示
-- [ ] T507: ニュースバナー検出ロジック作成（news-detector.ts）
-- [ ] T508: ニュースサイト用Content Script作成（news-site.ts）
-- [ ] T509: warning-overlay.ts にnews-site対応追加
-- [ ] T510: verified-badge.ts にnews-site対応追加
+- [x] T507: ニュースバナー検出ロジック作成（news-detector.ts）
+- [x] T508: ニュースサイト用Content Script作成（news-site.ts）
+- [x] T509: warning-overlay.ts にnews-site対応追加
+- [x] T510: verified-badge.ts にnews-site対応追加
 
 ### Phase 5-D: クリックブロック機能
-- [ ] T511: クリックブロッカー作成（click-blocker.ts）
-- [ ] T512: 警告モーダル作成（warning-modal.ts）
-- [ ] T513: モーダル・オーバーレイCSS作成（news-site.css）
+- [x] T511: クリックブロッカー作成（click-blocker.ts）
+- [x] T512: 警告モーダル作成（warning-modal.ts）
+- [x] T513: モーダル・オーバーレイCSS作成（news-site.css）
 
 ### Phase 5-E: サイドパネル連携
-- [ ] T514: サイドパネルUI更新（index.html, index.ts）
+- [x] T514: サイドパネルUI更新（index.html, index.ts）
 
 ### Phase 5-F: ビルド・テスト
-- [ ] T515: ビルド・型チェック
+- [x] T515: ビルド・型チェック
 - [ ] T516: デモサイトでの動作確認（ローカル） ※ブラウザで手動確認
 - [ ] T517: Instagram/TikTok回帰テスト ※ブラウザで手動確認
 - [ ] T518: デバッグ・調整
 
 ### Phase 5-G: デプロイ・完了
 - [ ] T519: Netlifyデプロイ設定（mainプッシュで自動デプロイ）
-- [ ] T520: ドキュメント更新（README、デモ手順書）
-- [ ] T521: コミット・プッシュ・PR作成
+- [x] T520: ドキュメント更新（README、デモ手順書）
+- [x] T521: コミット・プッシュ・PR作成
 
 ---
 
@@ -140,7 +140,7 @@ Phase 5の設計書に基づくタスク分解。デモ用フェイクニュー�
   - [ ] `version` を `"0.5.0"` に更新
   - [ ] `content_scripts` にニュースサイト用エントリ追加（localhost, netlify.app）
   - [ ] `content_scripts[2].js` に `src/content/news-site.ts` を指定
-  - [ ] `content_scripts[2].css` に `src/content/news-site.css` を指定
+  - [x] CSSはJS importで自動バンドル（`@crxjs/vite-plugin`の既存パターンに合わせて変更）
   - [ ] `host_permissions` に `http://localhost:*/*`, `https://*.netlify.app/*` を追加
 - **並列実行**: T501〜T504, T506と同時実行可能
 

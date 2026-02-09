@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 250" width="300" height="250">
+  <defs>
+    <linearGradient id="bg-toyota" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f8f9fa"/>
+      <stop offset="100%" style="stop-color:#e9ecef"/>
+    </linearGradient>
+  </defs>
+  <rect width="300" height="250" fill="url(#bg-toyota)"/>
+  <text x="150" y="40" text-anchor="middle" fill="#cc0000" font-size="18" font-weight="bold" font-family="sans-serif">TOYOTA</text>
+  <text x="150" y="60" text-anchor="middle" fill="#666666" font-size="10" font-family="sans-serif">トヨタ自動車株式会社</text>
+  <rect x="30" y="75" width="240" height="100" rx="8" fill="#e3f2fd"/>
+  <text x="150" y="108" text-anchor="middle" fill="#1565c0" font-size="13" font-weight="bold" font-family="sans-serif">🚗 新型 bZ シリーズ</text>
+  <text x="150" y="132" text-anchor="middle" fill="#333333" font-size="18" font-weight="bold" font-family="sans-serif">未来を、走ろう。</text>
+  <text x="150" y="155" text-anchor="middle" fill="#666666" font-size="11" font-family="sans-serif">電気で走る、新しいトヨタの提案</text>
+  <rect x="70" y="190" width="160" height="32" rx="16" fill="#cc0000"/>
+  <text x="150" y="211" text-anchor="middle" fill="#ffffff" font-size="13" font-weight="bold" font-family="sans-serif">詳しくはこちら</text>
+  <text x="150" y="240" text-anchor="middle" fill="#999999" font-size="9" font-family="sans-serif">toyota.jp</text>
+</svg>

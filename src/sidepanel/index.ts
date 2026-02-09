@@ -60,7 +60,12 @@ const createInfoRow = (
  * プラットフォーム名の日本語表示
  */
 const platformLabel = (platform: string): string => {
-  return platform === 'instagram' ? 'Instagram' : 'TikTok';
+  switch (platform) {
+    case 'instagram': return 'Instagram';
+    case 'tiktok': return 'TikTok';
+    case 'news-site': return 'ニュースサイト';
+    default: return platform;
+  }
 };
 
 /**
