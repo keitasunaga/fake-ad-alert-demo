@@ -1,4 +1,3 @@
 [build]
   command = "echo 'Static site - no build required'"
   publish = "demo-site/"
-  ignore = "exit 0"
