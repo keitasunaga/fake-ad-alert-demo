@@ -160,24 +160,11 @@ img {
   margin-bottom: 16px;
 }
 
-.article-image-placeholder {
-  background: linear-gradient(135deg, #e8f4fd, #dbeafe);
+.article-image img {
+  width: 100%;
+  height: auto;
   border-radius: 6px;
-  height: 240px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  color: #6b9dc8;
-}
-
-.article-image-placeholder span {
-  font-size: 48px;
-  margin-bottom: 8px;
-}
-
-.article-image-placeholder p {
-  font-size: 13px;
+  display: block;
 }
 
 .article-body p {
