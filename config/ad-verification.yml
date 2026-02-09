@@ -3,6 +3,7 @@
 
 whitelist:
   # 認証済み広告主（VeriCerts認証済み）
+  # 日本企業
   - name: "トヨタ自動車"
     patterns:
       - "toyota"
@@ -15,6 +16,23 @@ whitelist:
       - "ソニー"
       - "playstation"
       - "PlayStation"
+  - name: "ユニクロ"
+    patterns:
+      - "uniqlo"
+      - "UNIQLO"
+      - "ユニクロ"
+  - name: "楽天"
+    patterns:
+      - "rakuten"
+      - "Rakuten"
+      - "楽天"
+  - name: "ソフトバンク"
+    patterns:
+      - "softbank"
+      - "SoftBank"
+      - "ソフトバンク"
+
+  # グローバル企業
   - name: "Apple Japan"
     patterns:
       - "apple"
@@ -24,20 +42,41 @@ whitelist:
       - "nike"
       - "Nike"
       - "ナイキ"
-  - name: "ユニクロ"
+  - name: "Adidas"
     patterns:
-      - "uniqlo"
-      - "UNIQLO"
-      - "ユニクロ"
+      - "adidas"
+      - "Adidas"
+      - "アディダス"
+  - name: "Coca-Cola"
+    patterns:
+      - "cocacola"
+      - "coca-cola"
+      - "Coca-Cola"
+      - "コカ・コーラ"
+      - "コカコーラ"
+  - name: "McDonald's"
+    patterns:
+      - "mcdonalds"
+      - "McDonald"
+      - "マクドナルド"
+      - "マック"
 
 blacklist:
   # フェイク広告パターン（詐欺の可能性）
+
+  # 投資詐欺系
   - name: "投資詐欺系"
     patterns:
       - "今すぐ100万円"
       - "誰でも簡単に稼げる"
       - "副業で月収100万"
       - "投資で10倍"
+      - "元本保証"
+      - "必ず儲かる"
+      - "ノーリスク"
+      - "億り人"
+
+  # なりすまし系
   - name: "なりすまし系"
     patterns:
       - "前澤友作"
@@ -47,14 +86,39 @@ blacklist:
       - "ホリエモン"
       - "孫正義"
       - "イーロン・マスク"
+      - "Elon Musk"
+      - "与沢翼"
+
+  # 情報商材系
   - name: "情報商材系"
     patterns:
       - "限定公開"
       - "今だけ無料"
       - "残りわずか"
       - "秘密の方法"
+      - "稼ぐ方法を教えます"
+      - "LINE登録で"
+      - "公式LINE"
+
+  # 誇大広告系
+  - name: "誇大広告系"
+    patterns:
+      - "芸能人も愛用"
+      - "モデル御用達"
+      - "痩せすぎ注意"
+
+  # 怪しい美容系
   - name: "怪しい美容系"
     patterns:
       - "たった1週間で"
       - "驚きの効果"
       - "医者も驚く"
+
+  # 緊急系
+  - name: "緊急系"
+    patterns:
+      - "本日限り"
+      - "緊急"
+      - "あと◯名"
+      - "先着"
+      - "今すぐクリック"

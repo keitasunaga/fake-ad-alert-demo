@@ -1,21 +1,361 @@
 /*
- * Popup用スタイル
- * Phase 3で実装予定
+ * FakeAdAlertDemo - ポップアップUI
+ * Phase 3: ダークテーマ + グラスモーフィズム
+ * share-verifierと統一されたデザイン
  */
 
-body {
-  width: 280px;
-  padding: 16px;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-}
-
-h1 {
-  font-size: 16px;
-  margin: 0 0 8px 0;
-}
-
-p {
-  font-size: 14px;
-  color: #666;
+/* ==================== リセット ==================== */
+* {
   margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  width: 360px;
+  min-height: 200px;
+  background: #0f0f23;
+  color: #ffffff;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ==================== コンテナ ==================== */
+.popup-container {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* ==================== ヘッダー ==================== */
+.popup-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.popup-logo {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+}
+
+.popup-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #ffffff;
+  line-height: 1.2;
+}
+
+.popup-subtitle {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.5);
+  margin-top: 2px;
+}
+
+/* ==================== ステータス ==================== */
+.popup-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.status-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  border-radius: 10px;
+  font-size: 13px;
+  color: #4ade80;
+}
+
+.status-icon {
+  font-size: 14px;
+  line-height: 1;
+}
+
+.sns-row {
+  display: flex;
+  gap: 8px;
+}
+
+.sns-tag {
+  flex: 1;
+  padding: 6px 10px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.7);
+  text-align: center;
+}
+
+.sns-tag.sns-active {
+  color: #4ade80;
+  border-color: rgba(16, 185, 129, 0.2);
+}
+
+/* ==================== 結果ヘッダー ==================== */
+.result-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.result-icon {
+  font-size: 18px;
+  line-height: 1;
+}
+
+.result-success {
+  background: linear-gradient(135deg, rgba(5, 150, 105, 0.3), rgba(8, 145, 178, 0.3));
+  border: 1px solid rgba(16, 185, 129, 0.4);
+  color: #4ade80;
+}
+
+.result-danger {
+  background: linear-gradient(135deg, rgba(255, 107, 157, 0.3), rgba(255, 71, 87, 0.3));
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  color: #f87171;
+}
+
+.result-info {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.6);
+  flex-direction: column;
+  text-align: center;
+  padding: 24px 16px;
+  gap: 8px;
+}
+
+.result-info .result-icon {
+  font-size: 28px;
+}
+
+.result-info .result-text {
+  font-weight: 400;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+/* ==================== 展開可能カード ==================== */
+.card {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  overflow: hidden;
+  transition: border-color 0.2s ease;
+}
+
+.card:hover {
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 14px;
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.15s ease;
+}
+
+.card-header:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.card-icon {
+  font-size: 16px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.card-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+  flex: 1;
+}
+
+.card-chevron {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.4);
+  transition: transform 0.25s ease;
+  flex-shrink: 0;
+}
+
+.card-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease, padding 0.3s ease;
+  padding: 0 14px;
+}
+
+/* 展開状態 */
+.card-expanded .card-chevron {
+  transform: rotate(180deg);
+}
+
+.card-expanded .card-content {
+  max-height: 500px;
+  padding: 0 14px 14px;
+}
+
+/* ==================== InfoRow ==================== */
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 6px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  gap: 12px;
+}
+
+.info-row:last-child {
+  border-bottom: none;
+}
+
+.info-label {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.5);
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.info-value {
+  font-size: 12px;
+  color: #ffffff;
+  text-align: right;
+  word-break: break-all;
+}
+
+.code-value {
+  font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+  font-size: 11px;
+  color: #00d4ff;
+  background: rgba(0, 212, 255, 0.08);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+/* ==================== 検証ステータス ==================== */
+.status-valid {
+  color: #4ade80;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.status-invalid {
+  color: #f87171;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+/* ==================== 信頼チェーン ==================== */
+.trust-chain {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 0;
+}
+
+.trust-entity {
+  width: 100%;
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  text-align: center;
+}
+
+.trust-entity.trust-root {
+  border-color: rgba(14, 165, 233, 0.4);
+  background: rgba(14, 165, 233, 0.08);
+}
+
+.trust-entity.trust-intermediate {
+  border-color: rgba(139, 92, 246, 0.4);
+  background: rgba(139, 92, 246, 0.08);
+}
+
+.trust-entity.trust-subject {
+  border-color: rgba(16, 185, 129, 0.4);
+  background: rgba(16, 185, 129, 0.08);
+}
+
+.trust-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.trust-role {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.5);
+  margin-top: 2px;
+}
+
+.trust-did {
+  font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+  font-size: 10px;
+  color: #00d4ff;
+  margin-top: 4px;
+  word-break: break-all;
+}
+
+.trust-arrow {
+  font-size: 16px;
+  color: rgba(255, 255, 255, 0.3);
+  line-height: 1;
+}
+
+/* ==================== フェイク広告詳細 ==================== */
+.fake-details {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px 16px;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 10px;
+  margin-top: 4px;
+}
+
+.fake-detail-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+}
+
+.fake-detail-label {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.fake-detail-value {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* ==================== フッター ==================== */
+.popup-footer {
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.demo-notice {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.35);
+  text-align: center;
+  line-height: 1.5;
 }

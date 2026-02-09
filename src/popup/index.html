@@ -7,10 +7,42 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div id="app">
-    <h1>FakeAdAlertDemo</h1>
-    <p>Phase 3で実装予定</p>
+  <div class="popup-container">
+    <!-- ヘッダー -->
+    <header class="popup-header">
+      <img src="/icons/icon48.png" alt="Logo" class="popup-logo">
+      <div>
+        <h1 class="popup-title">FakeAdAlertDemo</h1>
+        <p class="popup-subtitle">VC Ad Verifier</p>
+      </div>
+    </header>
+
+    <!-- ステータス -->
+    <section class="popup-section">
+      <div class="status-badge status-active">
+        <span class="status-icon">&#x2705;</span>
+        <span>拡張機能は有効</span>
+      </div>
+      <div class="sns-row">
+        <span class="sns-tag sns-active">&#x1F4F8; Instagram &#x2713;</span>
+        <span class="sns-tag sns-active">&#x1F3B5; TikTok &#x2713;</span>
+      </div>
+    </section>
+
+    <!-- VC検証情報エリア -->
+    <section id="vc-content" class="popup-section">
+      <!-- JSで動的に生成 -->
+    </section>
+
+    <!-- フッター -->
+    <footer class="popup-footer">
+      <p class="demo-notice">
+        &#x26A0;&#xFE0F; これはデモ用アプリです<br>
+        VeriCerts認証のコンセプトデモンストレーション
+      </p>
+    </footer>
   </div>
+
   <script type="module" src="index.ts"></script>
 </body>
 </html>
