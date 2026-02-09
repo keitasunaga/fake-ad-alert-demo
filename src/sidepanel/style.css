@@ -1,6 +1,6 @@
 /*
- * FakeAdAlertDemo - ポップアップUI
- * Phase 3: ダークテーマ + グラスモーフィズム
+ * FakeAdAlertDemo - サイドパネルUI
+ * Phase 4: ダークテーマ + グラスモーフィズム
  * share-verifierと統一されたデザイン
  */
 
@@ -12,7 +12,8 @@
 }
 
 body {
-  width: 360px;
+  width: 100%;
+  min-width: 280px;
   min-height: 200px;
   background: #0f0f23;
   color: #ffffff;
@@ -21,7 +22,7 @@ body {
 }
 
 /* ==================== コンテナ ==================== */
-.popup-container {
+.panel-container {
   padding: 20px;
   display: flex;
   flex-direction: column;
@@ -29,7 +30,7 @@ body {
 }
 
 /* ==================== ヘッダー ==================== */
-.popup-header {
+.panel-header {
   display: flex;
   align-items: center;
   gap: 12px;
@@ -37,27 +38,27 @@ body {
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.popup-logo {
+.panel-logo {
   width: 40px;
   height: 40px;
   border-radius: 10px;
 }
 
-.popup-title {
+.panel-title {
   font-size: 18px;
   font-weight: 700;
   color: #ffffff;
   line-height: 1.2;
 }
 
-.popup-subtitle {
+.panel-subtitle {
   font-size: 12px;
   color: rgba(255, 255, 255, 0.5);
   margin-top: 2px;
 }
 
 /* ==================== ステータス ==================== */
-.popup-section {
+.panel-section {
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -348,7 +349,7 @@ body {
 }
 
 /* ==================== フッター ==================== */
-.popup-footer {
+.panel-footer {
   padding-top: 12px;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
 }

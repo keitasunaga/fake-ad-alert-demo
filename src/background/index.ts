@@ -1,6 +1,6 @@
 /**
  * Background Script (Service Worker)
- * Phase 3: 検出情報の保存
+ * Phase 4: サイドパネル対応
  */
 
 import type { DetectedAdInfo } from '../lib/vc-types';
@@ -10,6 +10,9 @@ export {};
 
 const SCRIPT_NAME = '[FakeAdAlertDemo]';
 const STORAGE_KEY = 'lastDetectedAd';
+
+// ツールバーアイコンクリックでサイドパネルを開く
+chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: true });
 
 // 拡張機能インストール時の処理
 chrome.runtime.onInstalled.addListener((details) => {
