@@ -20,27 +20,27 @@ Phase 4の設計書に基づくタスク分解。ポップアップUIをChrome S
 ## 2. タスク一覧
 
 ### Phase 4-A: サイドパネル基盤
-- [ ] T401: manifest.json 更新（sidePanel権限追加、popup削除）
-- [ ] T402: Background Script 更新（setPanelBehavior追加）
-- [ ] T403: Vite ビルド設定更新（エントリポイント差し替え）
+- [x] T401: manifest.json 更新（sidePanel権限追加、popup削除）
+- [x] T402: Background Script 更新（setPanelBehavior追加）
+- [x] T403: Vite ビルド設定更新（@crxjs/vite-pluginがmanifest.jsonから自動検出するため変更不要）
 
 ### Phase 4-B: サイドパネルUI移行
-- [ ] T404: サイドパネルHTML作成（popup/index.htmlから移行）
-- [ ] T405: サイドパネルCSS作成（popup/style.cssから移行、幅可変化）
-- [ ] T406: サイドパネルTypeScript作成（popup/index.tsから移行 + onChanged追加）
+- [x] T404: サイドパネルHTML作成（popup/index.htmlから移行）
+- [x] T405: サイドパネルCSS作成（popup/style.cssから移行、幅可変化）
+- [x] T406: サイドパネルTypeScript作成（popup/index.tsから移行 + onChanged追加）
 
 ### Phase 4-C: クリーンアップ
-- [ ] T407: ポップアップファイル削除（src/popup/）
+- [x] T407: ポップアップファイル削除（src/popup/）
 
 ### Phase 4-D: ビルド・テスト
-- [ ] T408: ビルド・型チェック
-- [ ] T409: サイドパネル動作確認（開閉、表示、リアルタイム更新）
-- [ ] T410: Instagram/TikTok 回帰テスト
+- [x] T408: ビルド・型チェック
+- [ ] T409: サイドパネル動作確認（開閉、表示、リアルタイム更新）※ブラウザで手動確認
+- [ ] T410: Instagram/TikTok 回帰テスト ※ブラウザで手動確認
 - [ ] T411: デバッグ・調整
 
 ### Phase 4-E: 完了
-- [ ] T412: ドキュメント更新（README、デモ手順書）
-- [ ] T413: コミット・プッシュ・PR作成
+- [x] T412: ドキュメント更新（README、デモ手順書）
+- [x] T413: コミット・プッシュ → PR #11 作成済み
 
 ---
 

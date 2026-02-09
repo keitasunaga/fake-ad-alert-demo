@@ -1,6 +1,6 @@
 /**
- * Popup Script - FakeAdAlertDemo
- * Phase 3: 検出情報の読み取りとVC情報の表示
+ * Side Panel Script - FakeAdAlertDemo
+ * Phase 4: リアルタイム更新対応
  */
 
 import type { DetectedAdInfo, VCInfo } from '../lib/vc-types';
@@ -183,7 +183,6 @@ const updateUI = async (): Promise<void> => {
     const vcInfo = getVCInfo(detected.advertiserName);
     if (vcInfo) {
       container.innerHTML = renderVerifiedAd(detected, vcInfo);
-      // カード展開/折りたたみのイベントリスナーを設定
       setupCardListeners();
       return;
     }
@@ -212,5 +211,15 @@ const setupCardListeners = (): void => {
   });
 };
 
-// 初期化
+/**
+ * chrome.storage.onChanged でリアルタイム更新
+ */
+chrome.storage.onChanged.addListener((changes, areaName) => {
+  if (areaName === 'session' && changes[STORAGE_KEY]) {
+    console.log('[FakeAdAlertDemo] Storage changed, updating side panel...');
+    updateUI();
+  }
+});
+
+// 初期化（サイドパネルが開いた時点でのUI更新）
 document.addEventListener('DOMContentLoaded', updateUI);
