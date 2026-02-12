@@ -66,6 +66,7 @@ export interface VCInfo {
 
 /**
  * 検出結果（storageに保存する情報）
+ * Phase 4以前の後方互換用（Instagram/TikTok Content Scriptが送信）
  */
 export interface DetectedAdInfo {
   advertiserName: string;
@@ -73,5 +74,28 @@ export interface DetectedAdInfo {
   result: 'verified' | 'fake' | 'unknown';
   matchedPattern?: string;
   listType?: string;
+  detectedAt: string;
+}
+
+/**
+ * 検出アイテム（Phase 6: マルチVC対応）
+ * サイトVCと広告VCを統一的に扱う
+ */
+export interface DetectedItem {
+  /** 一意のID */
+  id: string;
+  /** アイテムの種類 */
+  type: 'site' | 'ad';
+  /** 広告主名 or サイト名 */
+  advertiserName: string;
+  /** プラットフォーム */
+  platform: 'instagram' | 'tiktok' | 'news-site';
+  /** 判定結果 */
+  result: 'verified' | 'fake' | 'unknown';
+  /** マッチしたパターン */
+  matchedPattern?: string;
+  /** リストタイプ */
+  listType?: string;
+  /** 検出日時 */
   detectedAt: string;
 }
