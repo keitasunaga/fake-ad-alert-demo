@@ -12,12 +12,34 @@ const SCRIPT_NAME = '[FakeAdAlertDemo]';
 const STORAGE_KEY = 'lastDetectedAd';
 
 // ツールバーアイコンクリックでサイドパネルを開く
-chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: true });
+chrome.sidePanel
+  .setPanelBehavior({ openPanelOnActionClick: true })
+  .catch((err) => console.warn(`${SCRIPT_NAME} setPanelBehavior failed:`, err));
+
+// フォールバック: アイコンクリック時に明示的にサイドパネルを開く
+// setPanelBehavior が効かない環境（一部Windows Chrome）への対応
+chrome.action.onClicked.addListener((tab) => {
+  if (tab.id) {
+    chrome.sidePanel.open({ tabId: tab.id }).catch((err) => {
+      console.warn(`${SCRIPT_NAME} sidePanel.open failed:`, err);
+    });
+  }
+});
 
 // 拡張機能インストール時の処理
 chrome.runtime.onInstalled.addListener((details) => {
   console.log(`${SCRIPT_NAME} Extension installed:`, details.reason);
+  chrome.sidePanel
+    .setPanelBehavior({ openPanelOnActionClick: true })
+    .catch((err) => console.warn(`${SCRIPT_NAME} setPanelBehavior onInstalled:`, err));
   chrome.storage.session.remove(STORAGE_KEY);
+});
+
+// ブラウザ起動時にもサイドパネル設定を再適用
+chrome.runtime.onStartup.addListener(() => {
+  chrome.sidePanel
+    .setPanelBehavior({ openPanelOnActionClick: true })
+    .catch((err) => console.warn(`${SCRIPT_NAME} setPanelBehavior onStartup:`, err));
 });
 
 // Content Scriptからのメッセージを受信
