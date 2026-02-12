@@ -27,3 +27,9 @@ pnpm-debug.log*
 # Temporary files
 *.local
 .cache/
+
+# Distribution zip
+FakeAdAlertDemo-*.zip
+
+# Setup guide (confidential)
+docs/setup-guide.md
