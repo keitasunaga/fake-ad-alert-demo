@@ -1,6 +1,7 @@
 /*
  * FakeAdAlertDemo - サイドパネルUI
  * Phase 4: ダークテーマ + グラスモーフィズム
+ * Phase 6: ストーリーバー + マルチVCギャラリー
  * share-verifierと統一されたデザイン
  */
 
@@ -15,6 +16,8 @@ body {
   width: 100%;
   min-width: 280px;
   min-height: 200px;
+  height: 100vh;
+  overflow: hidden;
   background: #0f0f23;
   color: #ffffff;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -27,6 +30,8 @@ body {
   display: flex;
   flex-direction: column;
   gap: 16px;
+  height: 100vh;
+  overflow-y: auto;
 }
 
 /* ==================== ヘッダー ==================== */
@@ -346,6 +351,138 @@ body {
 
 .fake-detail-value {
   color: rgba(255, 255, 255, 0.8);
+}
+
+/* ==================== ストーリーバー（Phase 6） ==================== */
+.story-bar-section {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: rgba(15, 15, 35, 0.95);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  padding: 12px 0;
+  margin: 0 -20px;
+  padding-left: 20px;
+  padding-right: 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.story-bar-section:empty {
+  display: none;
+}
+
+.story-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 0;
+  padding: 4px 0;
+}
+
+.story-icon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  width: calc(100% / 3);
+  transition: transform 0.15s ease;
+}
+
+.story-icon:hover {
+  transform: scale(1.05);
+}
+
+.story-icon__circle {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #1a1a2e;
+  border: 2px solid transparent;
+  transition: border-width 0.2s ease-out, box-shadow 0.2s ease-out, opacity 0.2s ease;
+}
+
+.story-icon__initial {
+  font-size: 14px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.9);
+  line-height: 1;
+}
+
+.story-icon__label {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.6);
+  width: 100%;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  transition: opacity 0.2s ease;
+}
+
+/* リングカラー */
+.ring-site .story-icon__circle {
+  border-color: #3b82f6;
+}
+
+.ring-verified .story-icon__circle {
+  border-color: #10b981;
+}
+
+.ring-fake .story-icon__circle {
+  border-color: #ef4444;
+}
+
+/* 選択状態 */
+.story-icon--selected .story-icon__circle {
+  border-width: 3px;
+}
+
+.story-icon--selected.ring-site .story-icon__circle {
+  box-shadow: 0 0 8px rgba(59, 130, 246, 0.4);
+}
+
+.story-icon--selected.ring-verified .story-icon__circle {
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.4);
+}
+
+.story-icon--selected.ring-fake .story-icon__circle {
+  box-shadow: 0 0 8px rgba(239, 68, 68, 0.4);
+}
+
+/* 非選択状態の透明化 */
+.story-icon:not(.story-icon--selected) .story-icon__circle {
+  opacity: 0.7;
+}
+
+.story-icon:not(.story-icon--selected) .story-icon__label {
+  opacity: 0.5;
+}
+
+/* ==================== 詳細エリア（Phase 6） ==================== */
+.vc-detail-section {
+  flex: 1;
+  min-height: 0;
+}
+
+/* サイトVCヘッダー */
+.result-site {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.3), rgba(37, 99, 235, 0.3));
+  border: 1px solid rgba(59, 130, 246, 0.4);
+  color: #60a5fa;
+}
+
+/* 詳細切り替えアニメーション */
+@keyframes fadeInDetail {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.vc-detail-section > * {
+  animation: fadeInDetail 0.15s ease;
 }
 
 /* ==================== フッター ==================== */

@@ -1,6 +1,7 @@
 /**
  * モックVC情報 - FakeAdAlertDemo
  * Phase 3: ホワイトリスト企業のVC情報
+ * Phase 6: サイトVC追加
  * share-verifierのdata/patterns.jsonと同等のデータ構造
  */
 
@@ -195,6 +196,40 @@ const vcDatabase: Record<string, VCInfo> = {
     expiresAt: '2026-05-01T00:00:00Z',
   },
 
+  // デイリーニュース Japan（サイトVC）
+  'daily-news-japan': {
+    advertiserInfo: {
+      name: 'デイリーニュース Japan',
+      advertiserDid: 'did:web:daily-news-japan.example',
+      category: 'ニュースメディア',
+      platform: 'news-site',
+    },
+    verificationStatus: allVerified(),
+    trustChain: {
+      root: {
+        name: '総務省',
+        role: '信頼の基点',
+        did: 'did:web:soumu.go.jp',
+      },
+      intermediate: {
+        name: '日本新聞協会',
+        role: '認定メディア審査機関',
+        did: 'did:web:pressnet.or.jp',
+      },
+      subject: {
+        name: 'デイリーニュース Japan',
+        role: 'メディア発行者',
+        did: 'did:web:daily-news-japan.example',
+      },
+    },
+    blockchainProof: createBlockchainProof(
+      '0x4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e'
+    ),
+    vcId: 'urn:uuid:daily-news-japan-site-001',
+    issuedAt: '2025-06-01T00:00:00Z',
+    expiresAt: '2026-06-01T00:00:00Z',
+  },
+
   // McDonald's
   mcdonalds: {
     advertiserInfo: {
@@ -213,9 +248,32 @@ const vcDatabase: Record<string, VCInfo> = {
 };
 
 /**
+ * 日本語広告主名 → vcDatabaseキーのマッピング
+ * カタカナ/漢字名は英語キーワードマッチに不向きなため専用マップで対応
+ */
+const advertiserAliases: Record<string, string> = {
+  'トヨタ自動車': 'toyota',
+  'トヨタ': 'toyota',
+  'ソニーグループ': 'sony',
+  'ソニー': 'sony',
+  'ユニクロ': 'uniqlo',
+  '楽天': 'rakuten',
+  'ソフトバンク': 'softbank',
+};
+
+/**
  * 広告主名からモックVC情報を取得
  */
 export const getVCInfo = (advertiserName: string): VCInfo | null => {
+  // 日本語名のエイリアスマッチ（カタカナ/漢字対応）
+  for (const [alias, key] of Object.entries(advertiserAliases)) {
+    if (advertiserName.includes(alias)) {
+      const vc = vcDatabase[key];
+      if (vc) return { ...vc };
+    }
+  }
+
+  // 英語キーワードマッチ（従来ロジック）
   const lowerName = advertiserName.toLowerCase();
   for (const [key, vcInfo] of Object.entries(vcDatabase)) {
     if (lowerName.includes(key)) {
@@ -223,4 +281,19 @@ export const getVCInfo = (advertiserName: string): VCInfo | null => {
     }
   }
   return null;
+};
+
+/**
+ * サイト名→VCInfoの直接マッピング（Phase 6）
+ * 日本語サイト名はキーワードマッチに不向きなため専用関数で対応
+ */
+const siteVcDatabase: Record<string, VCInfo> = {
+  'デイリーニュース Japan': vcDatabase['daily-news-japan'],
+};
+
+/**
+ * サイト名からモックVC情報を取得
+ */
+export const getSiteVCInfo = (siteName: string): VCInfo | null => {
+  return siteVcDatabase[siteName] ? { ...siteVcDatabase[siteName] } : null;
 };

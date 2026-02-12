@@ -37,6 +37,17 @@ const processNewsBanners = (): void => {
 };
 
 /**
+ * サイト自体のVC情報をBackground Scriptに通知（Phase 6）
+ */
+const notifySiteDetected = (): void => {
+  chrome.runtime.sendMessage({
+    type: 'SITE_DETECTED',
+    siteName: 'デイリーニュース Japan',
+    platform: 'news-site',
+  });
+};
+
+/**
  * Background Scriptに通知
  */
 const notifyBackground = (
@@ -56,6 +67,7 @@ const notifyBackground = (
 // 初期化
 const init = (): void => {
   console.log(`${SCRIPT_NAME} Content script loaded`);
+  notifySiteDetected();
   processNewsBanners();
 };
 

@@ -1,16 +1,52 @@
 /**
  * Side Panel Script - FakeAdAlertDemo
- * Phase 4: リアルタイム更新対応
+ * Phase 6: マルチVCギャラリー（ストーリーバー型）
  */
 
-import type { DetectedAdInfo, VCInfo } from '../lib/vc-types';
-import { getVCInfo } from '../lib/vc-mock';
+import type { DetectedItem, VCInfo } from '../lib/vc-types';
+import { getVCInfo, getSiteVCInfo } from '../lib/vc-mock';
 
-const STORAGE_KEY = 'lastDetectedAd';
+const STORAGE_KEY = 'detectedItems';
+
+/** 現在選択中のアイテムID */
+let selectedItemId: string | null = null;
+
+// ── ユーティリティ ──
 
 /**
- * 展開可能カードのHTML生成
+ * 広告主名から頭文字を取得（日本語1文字、英語2文字）
  */
+const getInitial = (name: string): string => {
+  const first = name.charAt(0);
+  // ASCII文字（英字）の場合は2文字
+  if (/[A-Za-z]/.test(first)) {
+    return name.substring(0, 2).toUpperCase();
+  }
+  // 日本語等は1文字
+  return first;
+};
+
+/**
+ * ラベル用の省略名（最大6文字）
+ */
+const getLabel = (name: string): string => {
+  return name.length > 6 ? name.substring(0, 6) : name;
+};
+
+/**
+ * プラットフォーム名の日本語表示
+ */
+const platformLabel = (platform: string): string => {
+  switch (platform) {
+    case 'instagram': return 'Instagram';
+    case 'tiktok': return 'TikTok';
+    case 'news-site': return 'ニュースサイト';
+    default: return platform;
+  }
+};
+
+// ── 展開可能カード（既存ロジック流用） ──
+
 const createExpandableCard = (
   icon: string,
   title: string,
@@ -31,9 +67,6 @@ const createExpandableCard = (
   `;
 };
 
-/**
- * InfoRow生成
- */
 const createInfoRow = (
   label: string,
   value: string,
@@ -56,27 +89,18 @@ const createInfoRow = (
   `;
 };
 
-/**
- * プラットフォーム名の日本語表示
- */
-const platformLabel = (platform: string): string => {
-  switch (platform) {
-    case 'instagram': return 'Instagram';
-    case 'tiktok': return 'TikTok';
-    case 'news-site': return 'ニュースサイト';
-    default: return platform;
-  }
-};
+// ── VCカード共通レンダリング ──
 
 /**
- * 認証済み広告のUI生成
+ * 4枚のVCカードを生成（広告情報、検証ステータス、信頼チェーン、ブロックチェーン）
  */
-const renderVerifiedAd = (detected: DetectedAdInfo, vcInfo: VCInfo): string => {
-  const advertiserCard = createExpandableCard('&#x1F4CB;', '広告情報', `
-    ${createInfoRow('広告主', vcInfo.advertiserInfo.name)}
-    ${createInfoRow('広告主DID', vcInfo.advertiserInfo.advertiserDid, { isCode: true })}
+const renderVCCards = (item: DetectedItem, vcInfo: VCInfo): string => {
+  const infoTitle = item.type === 'site' ? 'サイト情報' : '広告情報';
+  const infoCard = createExpandableCard('&#x1F4CB;', infoTitle, `
+    ${createInfoRow(item.type === 'site' ? '発行者' : '広告主', vcInfo.advertiserInfo.name)}
+    ${createInfoRow(item.type === 'site' ? '発行者DID' : '広告主DID', vcInfo.advertiserInfo.advertiserDid, { isCode: true })}
     ${createInfoRow('カテゴリ', vcInfo.advertiserInfo.category)}
-    ${createInfoRow('プラットフォーム', platformLabel(detected.platform))}
+    ${createInfoRow('プラットフォーム', platformLabel(item.platform))}
   `, true);
 
   const statusCard = createExpandableCard('&#x2713;', '検証ステータス', `
@@ -115,22 +139,41 @@ const renderVerifiedAd = (detected: DetectedAdInfo, vcInfo: VCInfo): string => {
     ${createInfoRow('Contract', vcInfo.blockchainProof.contractAddress, { isCode: true })}
   `);
 
+  return infoCard + statusCard + trustChainCard + blockchainCard;
+};
+
+// ── 詳細エリアレンダリング ──
+
+/**
+ * サイトVC用の詳細表示
+ */
+const renderSiteVC = (item: DetectedItem, vcInfo: VCInfo): string => {
+  return `
+    <div class="result-header result-site">
+      <span class="result-icon">&#x1F3E2;</span>
+      <span class="result-text">サイト認証済み - このメディアは検証済みです</span>
+    </div>
+    ${renderVCCards(item, vcInfo)}
+  `;
+};
+
+/**
+ * 認証済み広告のUI生成
+ */
+const renderVerifiedAd = (item: DetectedItem, vcInfo: VCInfo): string => {
   return `
     <div class="result-header result-success">
       <span class="result-icon">&#x2705;</span>
       <span class="result-text">検証完了 - 証明書は有効です</span>
     </div>
-    ${advertiserCard}
-    ${statusCard}
-    ${trustChainCard}
-    ${blockchainCard}
+    ${renderVCCards(item, vcInfo)}
   `;
 };
 
 /**
  * フェイク広告のUI生成
  */
-const renderFakeAd = (detected: DetectedAdInfo): string => {
+const renderFakeAd = (item: DetectedItem): string => {
   return `
     <div class="result-header result-danger">
       <span class="result-icon">&#x26A0;&#xFE0F;</span>
@@ -142,16 +185,16 @@ const renderFakeAd = (detected: DetectedAdInfo): string => {
       </div>
       <div class="fake-detail-row">
         <span class="fake-detail-label">広告主</span>
-        <span class="fake-detail-value">${detected.advertiserName}</span>
+        <span class="fake-detail-value">${item.advertiserName}</span>
       </div>
       <div class="fake-detail-row">
         <span class="fake-detail-label">プラットフォーム</span>
-        <span class="fake-detail-value">${platformLabel(detected.platform)}</span>
+        <span class="fake-detail-value">${platformLabel(item.platform)}</span>
       </div>
-      ${detected.matchedPattern ? `
+      ${item.matchedPattern ? `
       <div class="fake-detail-row">
         <span class="fake-detail-label">マッチパターン</span>
-        <span class="fake-detail-value">${detected.listType === 'blacklist' ? 'ブラックリスト' : detected.matchedPattern}</span>
+        <span class="fake-detail-value">${item.listType === 'blacklist' ? 'ブラックリスト' : item.matchedPattern}</span>
       </div>
       ` : ''}
     </div>
@@ -170,41 +213,105 @@ const renderNoDetection = (): string => {
   `;
 };
 
+// ── ストーリーバーレンダリング ──
+
 /**
- * メインUI更新
+ * ストーリーアイコン1つのHTML生成
  */
-const updateUI = async (): Promise<void> => {
-  const result = await chrome.storage.session.get(STORAGE_KEY);
-  const detected = result[STORAGE_KEY] as DetectedAdInfo | undefined;
-  const container = document.getElementById('vc-content');
+const renderStoryIcon = (item: DetectedItem): string => {
+  const ringClass = item.type === 'site'
+    ? 'ring-site'
+    : item.result === 'verified'
+      ? 'ring-verified'
+      : 'ring-fake';
+
+  const isSelected = item.id === selectedItemId;
+  const selectedClass = isSelected ? 'story-icon--selected' : '';
+
+  return `
+    <div class="story-icon ${ringClass} ${selectedClass}" data-item-id="${item.id}">
+      <div class="story-icon__circle">
+        <span class="story-icon__initial">${getInitial(item.advertiserName)}</span>
+      </div>
+      <span class="story-icon__label">${getLabel(item.advertiserName)}</span>
+    </div>
+  `;
+};
+
+/**
+ * ストーリーバー全体のレンダリング
+ */
+const renderStoryBar = (items: DetectedItem[]): void => {
+  const container = document.getElementById('story-bar');
   if (!container) return;
 
-  if (!detected) {
-    container.innerHTML = renderNoDetection();
+  if (items.length === 0) {
+    container.innerHTML = '';
     return;
   }
 
-  if (detected.result === 'verified') {
-    const vcInfo = getVCInfo(detected.advertiserName);
+  container.innerHTML = `
+    <div class="story-bar">
+      ${items.map((item) => renderStoryIcon(item)).join('')}
+    </div>
+  `;
+
+  // クリックイベント設定
+  container.querySelectorAll('.story-icon').forEach((icon) => {
+    icon.addEventListener('click', () => {
+      const id = (icon as HTMLElement).dataset.itemId;
+      if (id) selectItem(id, items);
+    });
+  });
+};
+
+// ── 詳細エリア表示 ──
+
+/**
+ * 選択中アイテムの詳細をレンダリング
+ */
+const renderDetail = (item: DetectedItem): void => {
+  const container = document.getElementById('vc-detail');
+  if (!container) return;
+
+  if (item.type === 'site') {
+    const vcInfo = getSiteVCInfo(item.advertiserName);
     if (vcInfo) {
-      container.innerHTML = renderVerifiedAd(detected, vcInfo);
+      container.innerHTML = renderSiteVC(item, vcInfo);
       setupCardListeners();
       return;
     }
   }
 
-  if (detected.result === 'fake') {
-    container.innerHTML = renderFakeAd(detected);
+  if (item.result === 'verified') {
+    const vcInfo = getVCInfo(item.advertiserName);
+    if (vcInfo) {
+      container.innerHTML = renderVerifiedAd(item, vcInfo);
+      setupCardListeners();
+      return;
+    }
+  }
+
+  if (item.result === 'fake' || item.result === 'unknown') {
+    container.innerHTML = renderFakeAd(item);
     return;
   }
 
-  // unknown
   container.innerHTML = renderNoDetection();
 };
 
 /**
- * カード展開/折りたたみのイベントリスナー設定
+ * アイテム選択
  */
+const selectItem = (itemId: string, items: DetectedItem[]): void => {
+  selectedItemId = itemId;
+  renderStoryBar(items);
+  const item = items.find((i) => i.id === itemId);
+  if (item) renderDetail(item);
+};
+
+// ── カード展開/折りたたみ ──
+
 const setupCardListeners = (): void => {
   document.querySelectorAll('.card-header').forEach((header) => {
     header.addEventListener('click', () => {
@@ -216,9 +323,39 @@ const setupCardListeners = (): void => {
   });
 };
 
-/**
- * chrome.storage.onChanged でリアルタイム更新
- */
+// ── メインUI更新 ──
+
+const updateUI = async (): Promise<void> => {
+  const result = await chrome.storage.session.get(STORAGE_KEY);
+  const items = (result[STORAGE_KEY] as DetectedItem[]) ?? [];
+
+  const detailContainer = document.getElementById('vc-detail');
+
+  if (items.length === 0) {
+    // 未検出: ストーリーバーを空に、案内メッセージ表示
+    const storyContainer = document.getElementById('story-bar');
+    if (storyContainer) storyContainer.innerHTML = '';
+    if (detailContainer) detailContainer.innerHTML = renderNoDetection();
+    selectedItemId = null;
+    return;
+  }
+
+  // 選択中のアイテムが配列に存在するか確認
+  if (!selectedItemId || !items.find((i) => i.id === selectedItemId)) {
+    // 先頭アイテムを自動選択
+    selectedItemId = items[0].id;
+  }
+
+  renderStoryBar(items);
+
+  const selectedItem = items.find((i) => i.id === selectedItemId);
+  if (selectedItem) {
+    renderDetail(selectedItem);
+  }
+};
+
+// ── イベントリスナー ──
+
 chrome.storage.onChanged.addListener((changes, areaName) => {
   if (areaName === 'session' && changes[STORAGE_KEY]) {
     console.log('[FakeAdAlertDemo] Storage changed, updating side panel...');
@@ -226,5 +363,5 @@ chrome.storage.onChanged.addListener((changes, areaName) => {
   }
 });
 
-// 初期化（サイドパネルが開いた時点でのUI更新）
+// 初期化
 document.addEventListener('DOMContentLoaded', updateUI);
