@@ -313,11 +313,18 @@ const selectItem = (itemId: string, items: DetectedItem[]): void => {
 // ── カード展開/折りたたみ ──
 
 const setupCardListeners = (): void => {
+  const allCards = document.querySelectorAll('.card');
   document.querySelectorAll('.card-header').forEach((header) => {
     header.addEventListener('click', () => {
       const card = header.parentElement;
-      if (card) {
-        card.classList.toggle('card-expanded');
+      if (!card) return;
+      const isExpanding = !card.classList.contains('card-expanded');
+      // アコーディオン: 他のカードを全て閉じる
+      allCards.forEach((c) => c.classList.remove('card-expanded'));
+      if (isExpanding) {
+        card.classList.add('card-expanded');
+        // 展開したカードが見えるようスクロール
+        card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
       }
     });
   });
