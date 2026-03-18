@@ -1,6 +1,7 @@
 /**
  * VC型定義 - FakeAdAlertDemo
  * Phase 3: share-verifierと構造統一
+ * Phase 7: リアルVC検証用型定義追加
  */
 
 /**
@@ -98,4 +99,58 @@ export interface DetectedItem {
   listType?: string;
   /** 検出日時 */
   detectedAt: string;
+}
+
+// ── Phase 7: リアルVC検証用型定義 ──
+
+/**
+ * VC_DETECTED メッセージ型
+ */
+export interface VCDetectedMessage {
+  type: 'VC_DETECTED';
+  /** SD-JWT文字列（disclosures含む） */
+  vcRaw: string;
+  /** VCフォーマット */
+  format: 'dc+sd-jwt' | 'vc+sd-jwt';
+  /** HTML要素のid属性 */
+  elementId: string;
+  /** 検出されたページURL */
+  url: string;
+}
+
+/**
+ * Verify API レスポンス型
+ */
+export interface VCVerificationResponse {
+  valid: boolean;
+  verification: {
+    signatureStatus: 'valid' | 'invalid';
+    expiryStatus: 'valid' | 'expired';
+    issuerStatus: 'trusted' | 'untrusted' | 'unknown';
+    revocationStatus: 'valid' | 'revoked' | 'unavailable';
+    blockchainStatus: 'valid' | 'invalid' | 'pending' | 'failed' | 'skipped' | 'error';
+    formatStatus: 'valid' | 'invalid';
+  };
+  displayData: Record<string, unknown>;
+  metadata: {
+    issuer: string | null;
+    holder: string | null;
+    credentialType: string | null;
+    issueDate: string | null;
+    expiryDate: string | null;
+  };
+  error?: {
+    code: string;
+    message: string;
+    details?: string[];
+  } | null;
+}
+
+/**
+ * 検証状態（サイドパネルとBackgroundの受け渡し用）
+ */
+export interface VerificationState {
+  status: 'pending' | 'verifying' | 'verified' | 'error';
+  result?: VCVerificationResponse;
+  errorMessage?: string;
 }

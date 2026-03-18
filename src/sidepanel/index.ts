@@ -3,7 +3,7 @@
  * Phase 6: マルチVCギャラリー（ストーリーバー型）
  */
 
-import type { DetectedItem, VCInfo } from '../lib/vc-types';
+import type { DetectedItem, VCInfo, VerificationState, VCVerificationResponse } from '../lib/vc-types';
 import { getVCInfo, getSiteVCInfo } from '../lib/vc-mock';
 
 const STORAGE_KEY = 'detectedItems';
@@ -265,6 +265,159 @@ const renderStoryBar = (items: DetectedItem[]): void => {
   });
 };
 
+// ── Phase 7: リアルVC検証結果レンダリング ──
+
+/** 現在のタブのVC検証状態 */
+let currentVerificationState: VerificationState | null = null;
+
+/**
+ * 検証ステータスアイコンマッピング
+ */
+const getStatusIcon = (status: string): { icon: string; color: string } => {
+  switch (status) {
+    case 'valid':
+    case 'trusted':
+      return { icon: '&#x2705;', color: '#22c55e' };
+    case 'invalid':
+    case 'untrusted':
+    case 'revoked':
+    case 'expired':
+      return { icon: '&#x274C;', color: '#ef4444' };
+    case 'unknown':
+    case 'unavailable':
+      return { icon: '&#x26A0;&#xFE0F;', color: '#f59e0b' };
+    case 'skipped':
+    case 'pending':
+      return { icon: '&#x23ED;&#xFE0F;', color: '#6b7280' };
+    default:
+      return { icon: '&#x2753;', color: '#6b7280' };
+  }
+};
+
+const getStatusLabel = (key: string, value: string): string => {
+  const labels: Record<string, string> = {
+    signatureStatus: '署名',
+    expiryStatus: '有効期限',
+    issuerStatus: '発行者',
+    revocationStatus: '失効状態',
+    formatStatus: 'フォーマット',
+    blockchainStatus: 'ブロックチェーン',
+  };
+  const valueLabels: Record<string, string> = {
+    valid: '有効', invalid: '無効', trusted: '信頼済み', untrusted: '非信頼',
+    unknown: '不明', expired: '期限切れ', revoked: '失効', unavailable: '利用不可',
+    skipped: 'スキップ', pending: '保留', error: 'エラー', failed: '失敗',
+  };
+  return `${labels[key] ?? key}: ${valueLabels[value] ?? value}`;
+};
+
+/**
+ * 検証サマリーの判定
+ */
+const getVerificationSummary = (result: VCVerificationResponse): {
+  label: string; cssClass: string; icon: string;
+} => {
+  if (result.valid) {
+    return { label: '検証済み - コンテンツ証明書は有効です', cssClass: 'vc-verification-summary--valid', icon: '&#x2705;' };
+  }
+  const v = result.verification;
+  const criticalFail = v.signatureStatus === 'invalid' || v.formatStatus === 'invalid';
+  if (criticalFail) {
+    return { label: '検証失敗 - 証明書に問題があります', cssClass: 'vc-verification-summary--invalid', icon: '&#x274C;' };
+  }
+  return { label: '検証警告 - 一部の検証項目に注意が必要です', cssClass: 'vc-verification-summary--warning', icon: '&#x26A0;&#xFE0F;' };
+};
+
+/**
+ * リアル検証結果のHTML生成
+ */
+const renderRealVerificationResult = (result: VCVerificationResponse): string => {
+  const summary = getVerificationSummary(result);
+
+  // 検証項目リスト
+  const checks = Object.entries(result.verification).map(([key, value]) => {
+    const { icon, color } = getStatusIcon(value);
+    return `<div class="vc-check-item">
+      <span class="vc-check-icon" style="color:${color}">${icon}</span>
+      <span>${getStatusLabel(key, value)}</span>
+    </div>`;
+  }).join('');
+
+  // displayDataからクレーム情報
+  const displayData = result.displayData ?? {};
+  const claimFields = [
+    { key: 'headline', label: '見出し' },
+    { key: 'author', label: '著者' },
+    { key: 'editor', label: '編集' },
+    { key: 'datePublished', label: '公開日' },
+    { key: 'genre', label: 'ジャンル' },
+  ];
+  const contentRows = claimFields
+    .filter((f) => displayData[f.key])
+    .map((f) => `<div class="vc-content-row">
+      <span class="vc-content-label">${f.label}</span>
+      <span class="vc-content-value">${displayData[f.key]}</span>
+    </div>`)
+    .join('');
+
+  const issuerDid = result.metadata?.issuer ?? '';
+
+  return `
+    <div class="result-header result-site">
+      <span class="result-icon">&#x1F50D;</span>
+      <span class="result-text">コンテンツ証明書</span>
+    </div>
+    <div class="vc-verification-detail">
+      <div class="vc-verification-summary ${summary.cssClass}">
+        <span>${summary.icon}</span>
+        <span>${summary.label}</span>
+      </div>
+      <div class="vc-check-list">${checks}</div>
+      ${contentRows ? `
+      <div class="vc-content-info">
+        <h4>コンテンツ情報</h4>
+        ${contentRows}
+      </div>` : ''}
+      ${issuerDid ? `
+      <div class="vc-issuer-did">
+        <h4>発行者</h4>
+        <span class="code-value">${issuerDid}</span>
+      </div>` : ''}
+    </div>
+  `;
+};
+
+/**
+ * 検証中表示のHTML
+ */
+const renderVerifyingHTML = (): string => {
+  return `
+    <div class="result-header result-site">
+      <span class="result-icon">&#x1F50D;</span>
+      <span class="result-text">コンテンツ証明書</span>
+    </div>
+    <div class="vc-verifying">
+      <div class="vc-verifying-spinner"></div>
+      <span>検証中...</span>
+    </div>
+  `;
+};
+
+/**
+ * エラー表示のHTML（フォールバック案内付き）
+ */
+const renderVerificationError = (errorMessage: string): string => {
+  return `
+    <div class="vc-error">
+      <div class="vc-error-message">
+        <span>&#x1F534;</span>
+        <span>${errorMessage}</span>
+      </div>
+      <div class="vc-error-fallback">モックデータで表示中</div>
+    </div>
+  `;
+};
+
 // ── 詳細エリア表示 ──
 
 /**
@@ -273,6 +426,29 @@ const renderStoryBar = (items: DetectedItem[]): void => {
 const renderDetail = (item: DetectedItem): void => {
   const container = document.getElementById('vc-detail');
   if (!container) return;
+
+  // Phase 7: サイトVCはリアル検証結果を優先
+  if (item.type === 'site' && currentVerificationState) {
+    const state = currentVerificationState;
+    if (state.status === 'verifying') {
+      container.innerHTML = renderVerifyingHTML();
+      return;
+    }
+    if (state.status === 'verified' && state.result) {
+      container.innerHTML = renderRealVerificationResult(state.result);
+      setupCardListeners();
+      return;
+    }
+    if (state.status === 'error') {
+      // エラー時: エラーメッセージ + モックデータにフォールバック
+      const vcInfo = getSiteVCInfo(item.advertiserName);
+      if (vcInfo) {
+        container.innerHTML = renderVerificationError(state.errorMessage ?? '不明なエラー') + renderSiteVC(item, vcInfo);
+        setupCardListeners();
+        return;
+      }
+    }
+  }
 
   if (item.type === 'site') {
     const vcInfo = getSiteVCInfo(item.advertiserName);
@@ -364,11 +540,44 @@ const updateUI = async (): Promise<void> => {
 // ── イベントリスナー ──
 
 chrome.storage.onChanged.addListener((changes, areaName) => {
-  if (areaName === 'session' && changes[STORAGE_KEY]) {
+  if (areaName !== 'session') return;
+
+  // 既存: detectedItems変更 → ストーリーバー更新
+  if (changes[STORAGE_KEY]) {
     console.log('[FakeAdAlertDemo] Storage changed, updating side panel...');
     updateUI();
   }
+
+  // Phase 7: vcVerification_変更 → サイトVC詳細更新
+  for (const [key, change] of Object.entries(changes)) {
+    if (key.startsWith('vcVerification_')) {
+      const state: VerificationState = change.newValue;
+      console.log('[FakeAdAlertDemo] VC verification state changed:', state.status);
+      currentVerificationState = state;
+      // 選択中のアイテムがサイトVCなら再描画
+      updateUI();
+    }
+  }
 });
 
+/**
+ * 初期化時に現在タブの検証状態をロード
+ */
+const loadCurrentVerificationState = async (): Promise<void> => {
+  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+  if (!tab?.id) return;
+
+  const key = `vcVerification_${tab.id}`;
+  const data = await chrome.storage.session.get(key);
+  const state: VerificationState | undefined = data[key];
+
+  if (state) {
+    currentVerificationState = state;
+  }
+};
+
 // 初期化
-document.addEventListener('DOMContentLoaded', updateUI);
+document.addEventListener('DOMContentLoaded', async () => {
+  await loadCurrentVerificationState();
+  updateUI();
+});
