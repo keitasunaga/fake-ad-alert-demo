@@ -271,6 +271,18 @@ body {
   font-size: 14px;
 }
 
+.status-pending {
+  color: #fbbf24;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.status-warning {
+  color: #f59e0b;
+  font-weight: 700;
+  font-size: 14px;
+}
+
 /* ==================== 信頼チェーン ==================== */
 .trust-chain {
   display: flex;

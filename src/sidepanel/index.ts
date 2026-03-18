@@ -126,13 +126,40 @@ const renderVCCards = (item: DetectedItem, vcInfo: VCInfo, apiResult?: VCVerific
     ${extraRows}
   `, true);
 
-  const statusCard = createExpandableCard('&#x2713;', '検証ステータス', `
-    ${createInfoRow('発行者の署名', '', { isValid: vcInfo.verificationStatus.issuerSignature })}
-    ${createInfoRow('有効期限', '', { isValid: vcInfo.verificationStatus.expiration })}
-    ${createInfoRow('失効状態', '', { isValid: vcInfo.verificationStatus.revocationStatus })}
-    ${createInfoRow('トラストレジストリ', '', { isValid: vcInfo.verificationStatus.trustRegistry })}
-    ${createInfoRow('ブロックチェーン', '', { isValid: vcInfo.verificationStatus.blockchain })}
-  `);
+  // ── 検証ステータス ──
+  let statusContent: string;
+  if (isRealVerification) {
+    // リアル検証: APIの実際のステータス値を表示
+    const v = apiResult.verification;
+    const statusItems: [string, string, string][] = [
+      ['署名', v.signatureStatus, v.signatureStatus === 'valid' ? '有効' : '無効'],
+      ['フォーマット', v.formatStatus, v.formatStatus === 'valid' ? '有効' : '無効'],
+      ['有効期限', v.expiryStatus, v.expiryStatus === 'valid' ? '有効' : '期限切れ'],
+      ['失効状態', v.revocationStatus, v.revocationStatus === 'valid' ? '有効' : v.revocationStatus === 'unavailable' ? '利用不可' : '失効'],
+      ['発行者', v.issuerStatus, v.issuerStatus === 'trusted' ? '信頼済み' : v.issuerStatus === 'unknown' ? '不明' : '非信頼'],
+      ['ブロックチェーン', v.blockchainStatus, v.blockchainStatus === 'valid' ? '検証済み' : v.blockchainStatus === 'skipped' ? 'スキップ' : v.blockchainStatus === 'pending' ? '登録中' : v.blockchainStatus],
+    ];
+    statusContent = statusItems.map(([label, status, display]) => {
+      const isOk = status === 'valid' || status === 'trusted' || status === 'skipped';
+      const isPending = status === 'pending';
+      const icon = isOk ? '&#x2713;' : isPending ? '&#x23F3;' : status === 'unknown' || status === 'unavailable' ? '&#x26A0;' : '&#x2717;';
+      const cls = isOk ? 'valid' : isPending ? 'pending' : status === 'unknown' || status === 'unavailable' ? 'warning' : 'invalid';
+      return `<div class="info-row">
+        <span class="info-label">${label}</span>
+        <span class="info-value"><span class="status-${cls}">${icon}</span> ${display}</span>
+      </div>`;
+    }).join('');
+  } else {
+    // モック: 従来通りboolean表示
+    statusContent = `
+      ${createInfoRow('発行者の署名', '', { isValid: vcInfo.verificationStatus.issuerSignature })}
+      ${createInfoRow('有効期限', '', { isValid: vcInfo.verificationStatus.expiration })}
+      ${createInfoRow('失効状態', '', { isValid: vcInfo.verificationStatus.revocationStatus })}
+      ${createInfoRow('トラストレジストリ', '', { isValid: vcInfo.verificationStatus.trustRegistry })}
+      ${createInfoRow('ブロックチェーン', '', { isValid: vcInfo.verificationStatus.blockchain })}
+    `;
+  }
+  const statusCard = createExpandableCard('&#x2713;', '検証ステータス', statusContent);
 
   // ── 信頼チェーン ──
   let trustChainCard = '';
