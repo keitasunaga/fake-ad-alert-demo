@@ -93,14 +93,33 @@ const createInfoRow = (
 
 /**
  * 4枚のVCカードを生成（広告情報、検証ステータス、信頼チェーン、ブロックチェーン）
+ * displayData: リアル検証時のAPI displayDataを渡すと追加フィールドを表示
  */
-const renderVCCards = (item: DetectedItem, vcInfo: VCInfo): string => {
+const renderVCCards = (item: DetectedItem, vcInfo: VCInfo, displayData?: Record<string, unknown>): string => {
   const infoTitle = item.type === 'site' ? 'サイト情報' : '広告情報';
+
+  // displayDataがある場合は追加フィールドを表示
+  let extraRows = '';
+  if (displayData) {
+    const fields: [string[], string][] = [
+      [['共著者', 'author'], '著者'],
+      [['編集者', 'editor'], '編集'],
+      [['公開日時', 'datePublished'], '公開日'],
+      [['更新日時', 'dateModified'], '更新日'],
+      [['対象URL', 'allowedUrl'], '対象URL'],
+    ];
+    for (const [keys, label] of fields) {
+      const val = findDisplayValue(displayData as Record<string, unknown>, ...keys);
+      if (val) extraRows += createInfoRow(label, val);
+    }
+  }
+
   const infoCard = createExpandableCard('&#x1F4CB;', infoTitle, `
     ${createInfoRow(item.type === 'site' ? '発行者' : '広告主', vcInfo.advertiserInfo.name)}
     ${createInfoRow(item.type === 'site' ? '発行者DID' : '広告主DID', vcInfo.advertiserInfo.advertiserDid, { isCode: true })}
     ${createInfoRow('カテゴリ', vcInfo.advertiserInfo.category)}
     ${createInfoRow('プラットフォーム', platformLabel(item.platform))}
+    ${extraRows}
   `, true);
 
   const statusCard = createExpandableCard('&#x2713;', '検証ステータス', `
@@ -274,15 +293,25 @@ let currentVerificationState: VerificationState | null = null;
  * Verify APIレスポンスから既存VCInfo構造に変換
  * 既存の4つのアコーディオンカード（サイト情報、検証ステータス、信頼チェーン、ブロックチェーン証明）で表示するため
  */
+/**
+ * displayDataからキーを検索（日本語キー・英語キーの両方に対応）
+ */
+const findDisplayValue = (displayData: Record<string, unknown>, ...keys: string[]): string | null => {
+  for (const key of keys) {
+    if (displayData[key] != null) return String(displayData[key]);
+  }
+  return null;
+};
+
 const apiResponseToVCInfo = (result: VCVerificationResponse, fallback: VCInfo): VCInfo => {
-  const displayData = result.displayData ?? {};
+  const d = result.displayData ?? {};
   const v = result.verification;
 
   return {
     advertiserInfo: {
-      name: (displayData['headline'] as string) ?? fallback.advertiserInfo.name,
+      name: findDisplayValue(d, '記事タイトル', 'headline') ?? fallback.advertiserInfo.name,
       advertiserDid: result.metadata?.issuer ?? fallback.advertiserInfo.advertiserDid,
-      category: (displayData['genre'] as string) ?? fallback.advertiserInfo.category,
+      category: findDisplayValue(d, 'ジャンル', 'genre') ?? fallback.advertiserInfo.category,
       platform: fallback.advertiserInfo.platform,
     },
     verificationStatus: {
@@ -384,7 +413,7 @@ const renderDetail = (item: DetectedItem): void => {
             <span class="result-icon">&#x1F3E2;</span>
             <span class="result-text">${headerText}</span>
           </div>
-          ${renderVCCards(item, realVcInfo)}
+          ${renderVCCards(item, realVcInfo, state.result.displayData)}
         `;
         setupCardListeners();
         return;
