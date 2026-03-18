@@ -22,50 +22,50 @@ Phase 7の設計書に基づくタスク分解。デモサイトHTMLにSD-JWT形
 ## 2. タスク一覧
 
 ### Phase 7-A: 型定義・基盤
-- [ ] T701: VCVerificationResponse型・VerificationState型の追加（vc-types.ts）
-- [ ] T702: VCDetectedMessage型の追加（vc-types.ts）
+- [x] T701: VCVerificationResponse型・VerificationState型の追加（vc-types.ts）
+- [x] T702: VCDetectedMessage型の追加（vc-types.ts）
 
 ### Phase 7-B: デモサイトVC埋め込み
-- [ ] T703: demo-site/index.htmlの `<head>` にVC埋め込み
+- [x] T703: demo-site/index.htmlの `<head>` にVC埋め込み
 
 ### Phase 7-C: Content Script — VC検出（全サイト対応）
-- [ ] T704: vc-detector.ts新規作成 — 全サイト対応のVC検出Content Script
-- [ ] T704b: manifest.jsonのcontent_scriptsに `<all_urls>` でvc-detector.ts追加
+- [x] T704: vc-detector.ts新規作成 — 全サイト対応のVC検出Content Script
+- [x] T704b: manifest.jsonのcontent_scriptsに `<all_urls>` でvc-detector.ts追加
 
 ### Phase 7-D: Background Script — API連携
-- [ ] T705: manifest.jsonにhost_permissions追加
-- [ ] T706: VC_DETECTEDメッセージハンドラ追加（background/index.ts）
-- [ ] T707: Verify API呼び出し＋タイムアウト処理（background/index.ts）
-- [ ] T708: 検証結果のchrome.storage.session保存（background/index.ts）
-- [ ] T708b: 重複検証回避キャッシュ実装（background/index.ts）
+- [x] T705: manifest.jsonにhost_permissions追加
+- [x] T706: VC_DETECTEDメッセージハンドラ追加（background/index.ts）
+- [x] T707: Verify API呼び出し＋タイムアウト処理（background/index.ts）
+- [x] T708: 検証結果のchrome.storage.session保存（background/index.ts）
+- [x] T708b: 重複検証回避キャッシュ実装（background/index.ts）
 
 ### Phase 7-E: サイドパネル — 検証結果表示
-- [ ] T709: 検証中ローディングUI実装（style.css）
-- [ ] T710: リアル検証結果レンダリング関数（sidepanel/index.ts）
-- [ ] T711: 検証ステータスアイコン＋色マッピング（sidepanel/index.ts）
-- [ ] T712: displayDataからのクレーム情報表示（sidepanel/index.ts）
-- [ ] T713: エラー表示UI実装（sidepanel/index.ts）
-- [ ] T714: モックデータへのフォールバック処理（sidepanel/index.ts）
+- [x] T709: 検証中ローディングUI実装（style.css）
+- [x] T710: リアル検証結果レンダリング関数（sidepanel/index.ts）
+- [x] T711: 検証ステータスアイコン＋色マッピング（sidepanel/index.ts）
+- [x] T712: displayDataからのクレーム情報表示（sidepanel/index.ts）
+- [x] T713: エラー表示UI実装（sidepanel/index.ts）
+- [x] T714: モックデータへのフォールバック処理（sidepanel/index.ts）
 
 ### Phase 7-E2: サイドパネル — ストレージ監視統合
-- [ ] T714b: サイドパネルのvcVerification監視＋detectedItems統合（sidepanel/index.ts）
+- [x] T714b: サイドパネルのvcVerification監視＋detectedItems統合（sidepanel/index.ts）
 
 ### Phase 7-F: 仕上げ
-- [ ] T715: manifest.jsonバージョン更新（0.7.0）
+- [x] T715: manifest.jsonバージョン更新（0.7.0）
 
 ### Phase 7-G: テスト・確認
-- [ ] T716: ビルド・型チェック
-- [ ] T717: review環境のVerify APIでの正常系検証テスト
-- [ ] T718: エラーハンドリングテスト（ネットワーク切断、無効VC）
-- [ ] T719: バナー広告検出のデグレテスト
-- [ ] T720: Instagram/TikTok回帰テスト ※ブラウザで手動確認
+- [x] T716: ビルド・型チェック
+- [x] T717: review環境のVerify APIでの正常系検証テスト
+- [x] T718: エラーハンドリングテスト（ネットワーク切断、無効VC）
+- [x] T719: バナー広告検出のデグレテスト
+- [x] T720: Instagram/TikTok回帰テスト ※ブラウザで手動確認
 
 ### Phase 7-H: ドキュメント更新
-- [ ] T722: CLAUDE.md更新 — 判定ロジックセクションにリアルVC検証の記載追加
-- [ ] T723: README.md更新 — Phase 6/7のロードマップ追加、モック判定の注記更新
+- [x] T722: CLAUDE.md更新 — 判定ロジックセクションにリアルVC検証の記載追加
+- [x] T723: README.md更新 — Phase 6/7のロードマップ追加、モック判定の注記更新
 
 ### Phase 7-I: 完了
-- [ ] T721: コミット・プッシュ・PR作成
+- [x] T721: コミット・プッシュ・PR作成
 
 ---
 

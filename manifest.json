@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "FakeAdAlertDemo",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "description": "SNS上のフェイク広告を検出して警告表示するデモ",
   "permissions": [
     "activeTab",
@@ -13,7 +13,8 @@
     "https://www.tiktok.com/*",
     "https://www.youtube.com/*",
     "http://localhost:*/*",
-    "https://*.netlify.app/*"
+    "https://*.netlify.app/*",
+    "https://zero-engine-review.vericerts.io/*"
   ],
   "content_scripts": [
     {
@@ -32,6 +33,11 @@
         "https://*.netlify.app/*"
       ],
       "js": ["src/content/news-site.ts"],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": ["<all_urls>"],
+      "js": ["src/content/vc-detector.ts"],
       "run_at": "document_idle"
     }
   ],
