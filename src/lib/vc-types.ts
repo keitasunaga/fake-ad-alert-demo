@@ -139,6 +139,39 @@ export interface VCVerificationResponse {
     issueDate: string | null;
     expiryDate: string | null;
   };
+  trustRegistry?: {
+    isTrusted: boolean;
+    registry?: {
+      id?: string | null;
+      name?: string | null;
+      did?: string | null;
+      url?: string;
+    } | null;
+    accreditation?: {
+      id: string;
+      status: string;
+      accreditedFor: { schemaId: string; types: string[] }[];
+      validUntil?: string | null;
+    } | null;
+    trustChain?: {
+      taoId?: string | null;
+      taoDid?: string | null;
+      taoName?: string | null;
+      rootTaoId?: string | null;
+      rootTaoDid?: string | null;
+      rootTaoName?: string | null;
+    } | null;
+  } | null;
+  blockchain?: {
+    status: 'valid' | 'invalid' | 'pending' | 'failed' | 'skipped' | 'error';
+    message?: string | null;
+    metadata?: {
+      network?: string;
+      txHash?: string;
+      contractAddress?: string;
+      registeredAt?: string;
+    } | null;
+  } | null;
   error?: {
     code: string;
     message: string;

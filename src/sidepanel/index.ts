@@ -92,10 +92,14 @@ const createInfoRow = (
 // ── VCカード共通レンダリング ──
 
 /**
- * 4枚のVCカードを生成（広告情報、検証ステータス、信頼チェーン、ブロックチェーン）
- * displayData: リアル検証時のAPI displayDataを渡すと追加フィールドを表示
+ * VCカードを生成
+ * apiResult: リアル検証時のAPIレスポンスを渡すと、信頼チェーン・ブロックチェーンをリアルデータで表示
+ *            データがない場合はそれらのカードを非表示
+ * モック時（apiResult未指定）は従来通り4枚のカードを表示
  */
-const renderVCCards = (item: DetectedItem, vcInfo: VCInfo, displayData?: Record<string, unknown>): string => {
+const renderVCCards = (item: DetectedItem, vcInfo: VCInfo, apiResult?: VCVerificationResponse): string => {
+  const isRealVerification = !!apiResult;
+  const displayData = apiResult?.displayData;
   const infoTitle = item.type === 'site' ? 'サイト情報' : '広告情報';
 
   // displayDataがある場合は追加フィールドを表示
@@ -130,33 +134,92 @@ const renderVCCards = (item: DetectedItem, vcInfo: VCInfo, displayData?: Record<
     ${createInfoRow('ブロックチェーン', '', { isValid: vcInfo.verificationStatus.blockchain })}
   `);
 
-  const trustChainCard = createExpandableCard('&#x1F517;', '信頼チェーン', `
-    <div class="trust-chain">
-      <div class="trust-entity trust-root">
-        <div class="trust-name">${vcInfo.trustChain.root.name}</div>
-        <div class="trust-role">${vcInfo.trustChain.root.role}</div>
-        ${vcInfo.trustChain.root.did ? `<div class="trust-did">${vcInfo.trustChain.root.did}</div>` : ''}
+  // ── 信頼チェーン ──
+  let trustChainCard = '';
+  if (isRealVerification) {
+    // リアル検証: APIにデータがある場合のみ表示
+    const tr = apiResult.trustRegistry;
+    if (tr?.trustChain && (tr.trustChain.rootTaoName || tr.trustChain.taoName)) {
+      const chain = tr.trustChain;
+      const registryName = tr.registry?.name ?? chain.taoName ?? '';
+      trustChainCard = createExpandableCard('&#x1F517;', '信頼チェーン', `
+        <div class="trust-chain">
+          <div class="trust-entity trust-root">
+            <div class="trust-name">${chain.rootTaoName ?? '不明'}</div>
+            <div class="trust-role">信頼の基点</div>
+            ${chain.rootTaoDid ? `<div class="trust-did">${chain.rootTaoDid}</div>` : ''}
+          </div>
+          <div class="trust-arrow">&#x2193;</div>
+          <div class="trust-entity trust-intermediate">
+            <div class="trust-name">${registryName}</div>
+            <div class="trust-role">信頼レジストリ${tr.isTrusted ? '（認定済み）' : ''}</div>
+            ${chain.taoDid ? `<div class="trust-did">${chain.taoDid}</div>` : ''}
+          </div>
+          <div class="trust-arrow">&#x2193;</div>
+          <div class="trust-entity trust-subject">
+            <div class="trust-name">${vcInfo.advertiserInfo.name}</div>
+            <div class="trust-role">発行者</div>
+            ${vcInfo.advertiserInfo.advertiserDid ? `<div class="trust-did">${vcInfo.advertiserInfo.advertiserDid}</div>` : ''}
+          </div>
+        </div>
+      `);
+    }
+  } else {
+    // モック: 従来通り表示
+    trustChainCard = createExpandableCard('&#x1F517;', '信頼チェーン', `
+      <div class="trust-chain">
+        <div class="trust-entity trust-root">
+          <div class="trust-name">${vcInfo.trustChain.root.name}</div>
+          <div class="trust-role">${vcInfo.trustChain.root.role}</div>
+          ${vcInfo.trustChain.root.did ? `<div class="trust-did">${vcInfo.trustChain.root.did}</div>` : ''}
+        </div>
+        <div class="trust-arrow">&#x2193;</div>
+        <div class="trust-entity trust-intermediate">
+          <div class="trust-name">${vcInfo.trustChain.intermediate.name}</div>
+          <div class="trust-role">${vcInfo.trustChain.intermediate.role}</div>
+          ${vcInfo.trustChain.intermediate.did ? `<div class="trust-did">${vcInfo.trustChain.intermediate.did}</div>` : ''}
+        </div>
+        <div class="trust-arrow">&#x2193;</div>
+        <div class="trust-entity trust-subject">
+          <div class="trust-name">${vcInfo.trustChain.subject.name}</div>
+          <div class="trust-role">${vcInfo.trustChain.subject.role}</div>
+          ${vcInfo.trustChain.subject.did ? `<div class="trust-did">${vcInfo.trustChain.subject.did}</div>` : ''}
+        </div>
       </div>
-      <div class="trust-arrow">&#x2193;</div>
-      <div class="trust-entity trust-intermediate">
-        <div class="trust-name">${vcInfo.trustChain.intermediate.name}</div>
-        <div class="trust-role">${vcInfo.trustChain.intermediate.role}</div>
-        ${vcInfo.trustChain.intermediate.did ? `<div class="trust-did">${vcInfo.trustChain.intermediate.did}</div>` : ''}
-      </div>
-      <div class="trust-arrow">&#x2193;</div>
-      <div class="trust-entity trust-subject">
-        <div class="trust-name">${vcInfo.trustChain.subject.name}</div>
-        <div class="trust-role">${vcInfo.trustChain.subject.role}</div>
-        ${vcInfo.trustChain.subject.did ? `<div class="trust-did">${vcInfo.trustChain.subject.did}</div>` : ''}
-      </div>
-    </div>
-  `);
+    `);
+  }
 
-  const blockchainCard = createExpandableCard('&#x26D3;&#xFE0F;', 'ブロックチェーン証明', `
-    ${createInfoRow('Network', vcInfo.blockchainProof.network)}
-    ${createInfoRow('TxHash', vcInfo.blockchainProof.transactionHash, { isCode: true })}
-    ${createInfoRow('Contract', vcInfo.blockchainProof.contractAddress, { isCode: true })}
-  `);
+  // ── ブロックチェーン証明 ──
+  let blockchainCard = '';
+  if (isRealVerification) {
+    // リアル検証: APIにデータがある場合のみ表示
+    const bc = apiResult.blockchain;
+    if (bc) {
+      const meta = bc.metadata;
+      if (meta && (meta.network || meta.txHash)) {
+        // ブロックチェーン登録済み
+        blockchainCard = createExpandableCard('&#x26D3;&#xFE0F;', 'ブロックチェーン証明', `
+          ${createInfoRow('ステータス', bc.status === 'valid' ? '検証済み' : bc.status)}
+          ${meta.network ? createInfoRow('Network', meta.network) : ''}
+          ${meta.txHash ? createInfoRow('TxHash', meta.txHash, { isCode: true }) : ''}
+          ${meta.contractAddress ? createInfoRow('Contract', meta.contractAddress, { isCode: true }) : ''}
+        `);
+      } else if (bc.status !== 'skipped') {
+        // pending/error等: ステータスとメッセージを表示
+        blockchainCard = createExpandableCard('&#x26D3;&#xFE0F;', 'ブロックチェーン証明', `
+          ${createInfoRow('ステータス', bc.message ?? bc.status)}
+        `);
+      }
+      // skippedの場合: カードを非表示
+    }
+  } else {
+    // モック: 従来通り表示
+    blockchainCard = createExpandableCard('&#x26D3;&#xFE0F;', 'ブロックチェーン証明', `
+      ${createInfoRow('Network', vcInfo.blockchainProof.network)}
+      ${createInfoRow('TxHash', vcInfo.blockchainProof.transactionHash, { isCode: true })}
+      ${createInfoRow('Contract', vcInfo.blockchainProof.contractAddress, { isCode: true })}
+    `);
+  }
 
   return infoCard + statusCard + trustChainCard + blockchainCard;
 };
@@ -413,7 +476,7 @@ const renderDetail = (item: DetectedItem): void => {
             <span class="result-icon">&#x1F3E2;</span>
             <span class="result-text">${headerText}</span>
           </div>
-          ${renderVCCards(item, realVcInfo, state.result.displayData)}
+          ${renderVCCards(item, realVcInfo, state.result)}
         `;
         setupCardListeners();
         return;
